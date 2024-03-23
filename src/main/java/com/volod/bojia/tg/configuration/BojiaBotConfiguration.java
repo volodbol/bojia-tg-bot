@@ -1,11 +1,10 @@
 package com.volod.bojia.tg.configuration;
 
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.request.SetMyCommands;
+import com.pengrad.telegrambot.request.GetMe;
 import com.volod.bojia.tg.bot.handler.BojiaBotExceptionHandler;
 import com.volod.bojia.tg.bot.listener.BojiaBotUpdatesListener;
-import com.volod.bojia.tg.constant.BojiaLogPrefixes;
-import com.volod.bojia.tg.domain.bot.BojiaBotMyCommand;
+import com.volod.bojia.tg.constant.BojiaLogConstants;
 import com.volod.bojia.tg.property.BojiaApplicationProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,23 +12,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-@Configuration
-@Profile("dev")
-@RequiredArgsConstructor
 @Slf4j
-public class BojiaTelegramBotConfiguration {
+@Profile("dev")
+@Configuration
+@RequiredArgsConstructor
+public class BojiaBotConfiguration {
 
     private final BojiaApplicationProperties applicationProperties;
 
     @Bean
-    public TelegramBot bojiaTelegramBot(
-            BojiaBotUpdatesListener updatesListener,
-            BojiaBotExceptionHandler exceptionHandler
-    ) {
+    public TelegramBot bojiaBot() {
         var bot = new TelegramBot(this.applicationProperties.getBotToken());
-        bot.setUpdatesListener(updatesListener, exceptionHandler);
-        var setMyCommandsResponse = bot.execute(new SetMyCommands(BojiaBotMyCommand.getBotCommands()));
-        LOGGER.info(BojiaLogPrefixes.BOT_PREFIX + "set my commands response: {}", setMyCommandsResponse);
+        var getMeResponse = bot.execute(new GetMe());
+        if (!getMeResponse.isOk()) {
+            var ex = new IllegalArgumentException("Token is invalid. GetMe response - `%s`".formatted(getMeResponse));
+            LOGGER.error(BojiaLogConstants.BOT_ERROR, ex);
+            throw ex;
+        }
         return bot;
     }
 
