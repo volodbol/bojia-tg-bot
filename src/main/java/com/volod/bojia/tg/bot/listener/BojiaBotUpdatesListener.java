@@ -1,4 +1,4 @@
-package com.volod.bojia.tg.bot;
+package com.volod.bojia.tg.bot.listener;
 
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;

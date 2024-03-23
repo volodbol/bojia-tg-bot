@@ -1,8 +1,8 @@
 package com.volod.bojia.tg.configuration;
 
 import com.pengrad.telegrambot.TelegramBot;
-import com.volod.bojia.tg.bot.BojiaBotExceptionHandler;
-import com.volod.bojia.tg.bot.BojiaBotUpdatesListener;
+import com.volod.bojia.tg.bot.handler.BojiaBotExceptionHandler;
+import com.volod.bojia.tg.bot.listener.BojiaBotUpdatesListener;
 import com.volod.bojia.tg.property.BojiaApplicationProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

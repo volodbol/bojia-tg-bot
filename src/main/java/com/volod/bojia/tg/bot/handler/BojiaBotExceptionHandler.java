@@ -1,4 +1,4 @@
-package com.volod.bojia.tg.bot;
+package com.volod.bojia.tg.bot.handler;
 
 import com.pengrad.telegrambot.ExceptionHandler;
 import com.pengrad.telegrambot.TelegramException;
