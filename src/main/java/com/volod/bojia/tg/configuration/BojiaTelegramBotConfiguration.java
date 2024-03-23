@@ -17,7 +17,7 @@ public class BojiaTelegramBotConfiguration {
     private final BojiaApplicationProperties applicationProperties;
 
     @Bean
-    TelegramBot telegramBot(
+    public TelegramBot bojiaTelegramBot(
             BojiaBotUpdatesListener updatesListener,
             BojiaBotExceptionHandler exceptionHandler
     ) {
@@ -27,12 +27,12 @@ public class BojiaTelegramBotConfiguration {
     }
 
     @Bean
-    BojiaBotUpdatesListener updatesListener() {
+    public BojiaBotUpdatesListener updatesListener() {
         return new BojiaBotUpdatesListener();
     }
 
     @Bean
-    BojiaBotExceptionHandler exceptionHandler() {
+    public BojiaBotExceptionHandler exceptionHandler() {
         return new BojiaBotExceptionHandler();
     }
 
