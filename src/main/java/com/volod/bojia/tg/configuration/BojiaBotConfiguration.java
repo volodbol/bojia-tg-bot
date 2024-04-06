@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.GetMe;
 import com.volod.bojia.tg.bot.handler.BojiaBotExceptionHandler;
 import com.volod.bojia.tg.bot.listener.BojiaBotUpdatesListener;
-import com.volod.bojia.tg.constant.BojiaLogConstants;
+import com.volod.bojia.tg.domain.exception.BojiaBotInitializationException;
 import com.volod.bojia.tg.property.BojiaApplicationProperties;
 import com.volod.bojia.tg.service.bot.BojiaBotUserService;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
@@ -23,13 +23,15 @@ public class BojiaBotConfiguration {
     private final BojiaApplicationProperties applicationProperties;
 
     @Bean
-    public TelegramBot bojiaBot() {
+    public TelegramBot bojiaBot() throws BojiaBotInitializationException {
         var bot = new TelegramBot(this.applicationProperties.getBotToken());
-        var getMeResponse = bot.execute(new GetMe());
-        if (!getMeResponse.isOk()) {
-            var ex = new IllegalArgumentException("Token is invalid. GetMe response - `%s`".formatted(getMeResponse));
-            LOGGER.error(BojiaLogConstants.BOT_ERROR, ex);
-            throw ex;
+        try {
+            var getMeResponse = bot.execute(new GetMe());
+            if (!getMeResponse.isOk()) {
+                throw new IllegalArgumentException("Token is invalid. GetMe response - [%s]".formatted(getMeResponse));
+            }
+        } catch (RuntimeException ex) {
+            throw new BojiaBotInitializationException("Can't initialize bojia bot", ex);
         }
         return bot;
     }
