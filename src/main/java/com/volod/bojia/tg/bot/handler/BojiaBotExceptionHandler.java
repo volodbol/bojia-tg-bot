@@ -2,14 +2,17 @@ package com.volod.bojia.tg.bot.handler;
 
 import com.pengrad.telegrambot.ExceptionHandler;
 import com.pengrad.telegrambot.TelegramException;
-import lombok.extern.slf4j.Slf4j;
+import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
+import lombok.RequiredArgsConstructor;
 
-@Slf4j
+@RequiredArgsConstructor
 public class BojiaBotExceptionHandler implements ExceptionHandler {
+
+    private final BojiaExceptionHandlerService bojiaExceptionHandlerService;
 
     @Override
     public void onException(TelegramException ex) {
-        LOGGER.error("Exception occurred", ex);
+        this.bojiaExceptionHandlerService.publishException(ex);
     }
 
 }
