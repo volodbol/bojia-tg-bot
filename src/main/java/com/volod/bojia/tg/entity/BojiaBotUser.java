@@ -1,5 +1,7 @@
 package com.volod.bojia.tg.entity;
 
+import com.pengrad.telegrambot.model.Chat;
+import com.pengrad.telegrambot.model.User;
 import com.volod.bojia.tg.constant.PostgresConstants;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,19 +10,27 @@ import org.hibernate.proxy.HibernateProxy;
 import java.util.Objects;
 
 @Entity
-@Table(name = PostgresConstants.BOJIA_BOT_DETAILS_TABLE)
+@Table(name = PostgresConstants.BOJIA_BOT_USER_TABLE)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class BojiaBotDetails {
+public class BojiaBotUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bojia_bot_details_id_seq")
-    @SequenceGenerator(name = "bojia_bot_details_id_seq", allocationSize = 1)
     private Long id;
     @Column
-    private boolean myCommandsPresent;
+    private Long chatId;
+    @Column
+    private String firstName;
+    @Column
+    private String prompt;
+
+    public BojiaBotUser(User user, Chat chat) {
+        this.id = user.id();
+        this.chatId = chat.id();
+        this.firstName = user.firstName();
+    }
 
     @Override
     public final boolean equals(Object o) {
@@ -33,7 +43,7 @@ public class BojiaBotDetails {
                 proxy.getHibernateLazyInitializer().getPersistentClass()
                 : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        var that = (BojiaBotDetails) o;
+        var that = (BojiaBotUser) o;
         return this.getId() != null && Objects.equals(this.getId(), that.getId());
     }
 
