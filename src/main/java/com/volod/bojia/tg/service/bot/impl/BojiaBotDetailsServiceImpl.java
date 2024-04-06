@@ -12,17 +12,17 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @RequiredArgsConstructor
 public class BojiaBotDetailsServiceImpl implements BojiaBotDetailsService {
 
-    private final BojiaBotDetailsRepository bojiaBotDetailsRepository;
+    private final BojiaBotDetailsRepository botDetailsRepository;
 
     @Override
     public BojiaBotDetails findOneOrCreate() {
-        var details = this.bojiaBotDetailsRepository.findAll();
+        var details = this.botDetailsRepository.findAll();
         return isEmpty(details) ? new BojiaBotDetails() : details.get(0);
     }
 
     @Override
     public void save(BojiaBotDetails botDetails) {
-        this.bojiaBotDetailsRepository.save(botDetails);
+        this.botDetailsRepository.save(botDetails);
     }
 
 }

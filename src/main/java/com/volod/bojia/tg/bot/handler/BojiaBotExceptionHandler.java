@@ -8,11 +8,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BojiaBotExceptionHandler implements ExceptionHandler {
 
-    private final BojiaExceptionHandlerService bojiaExceptionHandlerService;
+    private final BojiaExceptionHandlerService exceptionHandlerService;
 
     @Override
     public void onException(TelegramException ex) {
-        this.bojiaExceptionHandlerService.publishException(ex);
+        this.exceptionHandlerService.publishException(ex);
     }
 
 }

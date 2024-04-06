@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class BojiaShutdownServiceImpl implements BojiaShutdownService {
 
-    private final TelegramBot bojiaTelegramBot;
+    private final TelegramBot bot;
 
     @PreDestroy
     @Override
     public void onShutdown() {
-        this.bojiaTelegramBot.shutdown();
+        this.bot.shutdown();
         LOGGER.info(BojiaLogConstants.BOT_PREFIX + "shutdown initiated");
     }
 

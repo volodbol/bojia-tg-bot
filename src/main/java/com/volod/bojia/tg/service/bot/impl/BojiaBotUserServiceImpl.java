@@ -15,7 +15,7 @@ public class BojiaBotUserServiceImpl implements BojiaBotUserService {
 
     @Override
     public BojiaBotUser save(BojiaBotUser bojiaBotUser) {
-        return botUserRepository.save(bojiaBotUser);
+        return this.botUserRepository.save(bojiaBotUser);
     }
 
     @Override

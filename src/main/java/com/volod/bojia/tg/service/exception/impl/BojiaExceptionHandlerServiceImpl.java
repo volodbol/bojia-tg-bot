@@ -2,6 +2,7 @@ package com.volod.bojia.tg.service.exception.impl;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendDocument;
+import com.volod.bojia.tg.constant.BojiaLogConstants;
 import com.volod.bojia.tg.property.BojiaApplicationProperties;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import lombok.RequiredArgsConstructor;
@@ -16,21 +17,22 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class BojiaExceptionHandlerServiceImpl implements BojiaExceptionHandlerService {
 
-    private final TelegramBot bojiaBot;
+    private final TelegramBot bot;
     private final BojiaApplicationProperties applicationProperties;
 
     @Override
     public void publishException(Throwable ex) {
+        LOGGER.error(BojiaLogConstants.APPLICATION_PREFIX + "exception occurred", ex);
         for (var chatId : this.applicationProperties.getAdminChatIds()) {
             try {
-                this.bojiaBot.execute(
+                this.bot.execute(
                         new SendDocument(
                                 chatId,
                                 "Exception occurred: [%s]".formatted(ex)
                         ).fileName(LocalDateTime.now().format(DateTimeFormatter.ISO_INSTANT) + ".txt")
                 );
             } catch (RuntimeException rex) {
-                LOGGER.error("Can't send message with exception:", rex);
+                LOGGER.error(BojiaLogConstants.BOT_PREFIX + "can't send exception occurred message:", rex);
             }
         }
     }
