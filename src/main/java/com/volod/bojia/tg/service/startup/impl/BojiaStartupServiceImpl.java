@@ -18,23 +18,23 @@ import org.springframework.stereotype.Service;
 public class BojiaStartupServiceImpl implements BojiaStartupService {
 
     // Bot
-    private final TelegramBot bojiaBot;
-    private final BojiaBotUpdatesListener bojiaBotUpdatesListener;
-    private final BojiaBotExceptionHandler bojiaBotExceptionHandler;
+    private final TelegramBot bot;
+    private final BojiaBotUpdatesListener botUpdatesListener;
+    private final BojiaBotExceptionHandler botExceptionHandler;
     // Service
-    private final BojiaBotDetailsService bojiaBotDetailsService;
+    private final BojiaBotDetailsService botDetailsService;
 
     @Override
     public void initializeBot() {
         LOGGER.info(BojiaLogConstants.BOT_PREFIX + "initialization started");
-        var botDetails = this.bojiaBotDetailsService.findOneOrCreate();
+        var botDetails = this.botDetailsService.findOneOrCreate();
         if (!botDetails.isMyCommandsPresent()) {
-            var setMyCommandsResponse = this.bojiaBot.execute(new SetMyCommands(BojiaBotMyCommand.getBotCommands()));
+            var setMyCommandsResponse = this.bot.execute(new SetMyCommands(BojiaBotMyCommand.getBotCommands()));
             LOGGER.info(BojiaLogConstants.BOT_PREFIX + "set my commands response: {}", setMyCommandsResponse);
             botDetails.setMyCommandsPresent(setMyCommandsResponse.isOk());
         }
-        this.bojiaBotDetailsService.save(botDetails);
-        this.bojiaBot.setUpdatesListener(this.bojiaBotUpdatesListener, this.bojiaBotExceptionHandler);
+        this.botDetailsService.save(botDetails);
+        this.bot.setUpdatesListener(this.botUpdatesListener, this.botExceptionHandler);
         LOGGER.info(BojiaLogConstants.BOT_PREFIX + "initialization completed");
     }
 
