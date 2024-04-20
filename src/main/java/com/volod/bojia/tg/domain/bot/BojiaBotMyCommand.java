@@ -9,7 +9,8 @@ import java.util.Arrays;
 @AllArgsConstructor
 @Getter
 public enum BojiaBotMyCommand {
-    HELP("help", "see help page");
+    HELP("help", "see help page"),
+    ADD_PROMPT("prompt", "add prompt to use for generation cover letter");
 
     private final String command;
     private final String description;

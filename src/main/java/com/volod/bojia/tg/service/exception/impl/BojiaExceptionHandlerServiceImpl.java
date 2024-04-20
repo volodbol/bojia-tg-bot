@@ -10,7 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
 @Slf4j
 @Service
@@ -22,17 +23,18 @@ public class BojiaExceptionHandlerServiceImpl implements BojiaExceptionHandlerSe
 
     @Override
     public void publishException(Throwable ex) {
-        LOGGER.error(BojiaLogConstants.APPLICATION_PREFIX + "exception occurred", ex);
+        LOGGER.debug(BojiaLogConstants.APPLICATION_PREFIX + "exception occurred", ex);
         for (var chatId : this.applicationProperties.getAdminChatIds()) {
             try {
                 this.bot.execute(
-                        new SendDocument(
-                                chatId,
-                                "Exception occurred: [%s]".formatted(ex)
-                        ).fileName(LocalDateTime.now().format(DateTimeFormatter.ISO_INSTANT) + ".txt")
+                        new SendDocument(chatId, "Exception occurred: [%s]".formatted(ex))
+                                .fileName(LocalDateTime.now().format(ISO_INSTANT) + ".txt")
                 );
             } catch (RuntimeException rex) {
-                LOGGER.error(BojiaLogConstants.BOT_PREFIX + "can't send exception occurred message:", rex);
+                LOGGER.error(BojiaLogConstants.BOT_PREFIX + "can't send message with exception", rex);
+                if (!LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(BojiaLogConstants.APPLICATION_PREFIX + "exception related to message", ex);
+                }
             }
         }
     }
