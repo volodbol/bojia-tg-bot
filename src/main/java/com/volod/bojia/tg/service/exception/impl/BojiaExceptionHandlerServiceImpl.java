@@ -33,7 +33,7 @@ public class BojiaExceptionHandlerServiceImpl implements BojiaExceptionHandlerSe
             } catch (RuntimeException rex) {
                 LOGGER.error(BojiaLogConstants.BOT_PREFIX + "can't send message with exception", rex);
                 if (!LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(BojiaLogConstants.APPLICATION_PREFIX + "exception related to message", ex);
+                    LOGGER.error(BojiaLogConstants.APPLICATION_PREFIX + "exception related to message", ex);
                 }
             }
         }
