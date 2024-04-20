@@ -6,7 +6,7 @@ import com.volod.bojia.tg.bot.handler.BojiaBotExceptionHandler;
 import com.volod.bojia.tg.bot.listener.BojiaBotUpdatesListener;
 import com.volod.bojia.tg.domain.exception.BojiaBotInitializationException;
 import com.volod.bojia.tg.property.BojiaApplicationProperties;
-import com.volod.bojia.tg.service.bot.BojiaBotUserService;
+import com.volod.bojia.tg.service.bot.BojiaBotCommandService;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,10 +38,12 @@ public class BojiaBotConfiguration {
 
     @Bean
     public BojiaBotUpdatesListener updatesListener(
-            BojiaBotUserService botUserService
+            BojiaBotCommandService commandService,
+            BojiaExceptionHandlerService exceptionHandlerService
     ) {
         return new BojiaBotUpdatesListener(
-                botUserService
+                commandService,
+                exceptionHandlerService
         );
     }
 

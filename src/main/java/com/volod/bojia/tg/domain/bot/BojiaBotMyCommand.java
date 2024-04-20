@@ -10,7 +10,7 @@ import java.util.Arrays;
 @Getter
 public enum BojiaBotMyCommand {
     HELP("help", "see help page"),
-    ADD_PROMPT("prompt", "add prompt to use for generation cover letter");
+    ADD_PROMPT("prompt", "add prompt to use for cover letter generation");
 
     private final String command;
     private final String description;
