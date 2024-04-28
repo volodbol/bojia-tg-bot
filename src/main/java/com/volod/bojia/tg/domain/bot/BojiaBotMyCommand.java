@@ -15,6 +15,10 @@ public enum BojiaBotMyCommand {
     private final String command;
     private final String description;
 
+    public String getCommand() {
+        return "/" + this.command;
+    }
+
     public static BotCommand[] getBotCommands() {
         return Arrays.stream(BojiaBotMyCommand.values())
                 .map(command -> new BotCommand(command.getCommand(), command.getDescription()))

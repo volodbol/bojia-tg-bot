@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.GetMe;
 import com.volod.bojia.tg.bot.handler.BojiaBotExceptionHandler;
 import com.volod.bojia.tg.bot.listener.BojiaBotUpdatesListener;
+import com.volod.bojia.tg.constant.BojiaLogConstants;
 import com.volod.bojia.tg.domain.exception.BojiaBotInitializationException;
 import com.volod.bojia.tg.property.BojiaApplicationProperties;
 import com.volod.bojia.tg.service.bot.BojiaBotCommandService;
@@ -27,6 +28,7 @@ public class BojiaBotConfiguration {
         var bot = new TelegramBot(this.applicationProperties.getBotToken());
         try {
             var getMeResponse = bot.execute(new GetMe());
+            LOGGER.trace(BojiaLogConstants.BOT_PREFIX + "getMeResponse: {}", getMeResponse);
             if (!getMeResponse.isOk()) {
                 throw new IllegalArgumentException("Token is invalid. GetMe response - [%s]".formatted(getMeResponse));
             }
