@@ -2,7 +2,9 @@ package com.volod.bojia.tg.service.bot;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.volod.bojia.tg.domain.exception.BojiaBotUpdateIllegal;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -11,6 +13,7 @@ import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.ADD_PROMPT;
 import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.HELP;
 import static java.util.Objects.isNull;
 
+@Slf4j
 public abstract class BojiaBotCommandService {
 
     protected final TelegramBot bot;
@@ -36,6 +39,9 @@ public abstract class BojiaBotCommandService {
             var command = message.text().split(" ")[0];
             this.commandMappings.getOrDefault(command, this::processUnknownCommand).accept(update);
             return update.updateId();
+        } catch (BojiaBotUpdateIllegal ex) {
+            LOGGER.debug("Can't process update", ex);
+            return update.updateId();
         } catch (RuntimeException ex) {
             this.exceptionHandlerService.publishException(ex);
             this.processUnknownCommand(update);
@@ -43,10 +49,10 @@ public abstract class BojiaBotCommandService {
         }
     }
 
-    public final void validateUpdate(Update update) {
+    public final void validateUpdate(Update update) throws BojiaBotUpdateIllegal {
         var message = update.message();
         if (isNull(message) || isNull(message.text())) {
-            throw new IllegalArgumentException("Illegal update: " + update);
+            throw new BojiaBotUpdateIllegal(update);
         }
     }
 
