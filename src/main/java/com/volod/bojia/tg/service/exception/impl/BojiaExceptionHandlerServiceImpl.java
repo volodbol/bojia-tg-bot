@@ -2,7 +2,9 @@ package com.volod.bojia.tg.service.exception.impl;
 
 import com.google.common.base.Throwables;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.request.ReplyParameters;
 import com.pengrad.telegrambot.request.SendDocument;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
 import com.volod.bojia.tg.constant.BojiaLogConstants;
 import com.volod.bojia.tg.property.BojiaApplicationProperties;
@@ -33,14 +35,19 @@ public class BojiaExceptionHandlerServiceImpl implements BojiaExceptionHandlerSe
         LOGGER.debug(BojiaLogConstants.APPLICATION_PREFIX + "exception occurred", ex);
         for (var chatId : this.applicationProperties.getAdminChatIds()) {
             try {
-                var response = this.bot.execute(
-                        new SendDocument(
-                                chatId,
-                                "Exception occurred: %s".formatted(Throwables.getStackTraceAsString(ex)).getBytes()
-                        ).fileName("Incident-" + DTF.format(Instant.now()) + ".txt")
+                var messageResponse = this.bot.execute(new SendMessage(chatId, "Exception occurred:"));
+                var documentResponse = this.bot.execute(
+                        new SendDocument(chatId, Throwables.getStackTraceAsString(ex).getBytes())
+                                .fileName("Exception-" + DTF.format(Instant.now()) + ".txt")
+                                .replyParameters(
+                                        new ReplyParameters(
+                                                messageResponse.message().messageId(),
+                                                chatId
+                                        )
+                                )
                 );
-                if (!response.isOk()) {
-                    this.logExceptions(ex, response, null);
+                if (!documentResponse.isOk()) {
+                    this.logExceptions(ex, documentResponse, null);
                 }
             } catch (RuntimeException rex) {
                 this.logExceptions(ex, null, rex);
@@ -54,7 +61,7 @@ public class BojiaExceptionHandlerServiceImpl implements BojiaExceptionHandlerSe
             @Nullable RuntimeException rex
     ) {
         LOGGER.error(BojiaLogConstants.APPLICATION_PREFIX + "exception occurred", ex);
-        LOGGER.error(BojiaLogConstants.BOT_PREFIX + "can't send message with exception", response, rex);
+        LOGGER.error(BojiaLogConstants.BOT_PREFIX + "can't send message with exception: {}", response, rex);
     }
 
 }

@@ -7,17 +7,20 @@ import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.ADD_PROMPT;
 import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.HELP;
 import static java.util.Objects.isNull;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
 @Slf4j
 public abstract class BojiaBotCommandService {
 
     protected final TelegramBot bot;
     protected final BojiaExceptionHandlerService exceptionHandlerService;
+    private final Executor exceptionExecutor;
 
     private final Map<String, Consumer<Update>> commandMappings = Map.of(
             HELP.getCommand(), this::processHelpCommand,
@@ -30,6 +33,7 @@ public abstract class BojiaBotCommandService {
     ) {
         this.bot = bot;
         this.exceptionHandlerService = exceptionHandlerService;
+        this.exceptionExecutor = newFixedThreadPool(1, runnable -> new Thread(runnable, "bot-cmd-srs-ex-exec"));
     }
 
     public final Integer processUpdate(Update update) {
@@ -41,12 +45,11 @@ public abstract class BojiaBotCommandService {
             return update.updateId();
         } catch (BojiaBotUpdateIllegal ex) {
             LOGGER.debug("Can't process update", ex);
-            return update.updateId();
         } catch (RuntimeException ex) {
-            this.exceptionHandlerService.publishException(ex);
-            this.processUnknownCommand(update);
-            return update.updateId();
+            this.exceptionExecutor.execute(() -> this.exceptionHandlerService.publishException(ex));
         }
+        this.processUnknownCommand(update);
+        return update.updateId();
     }
 
     public final void validateUpdate(Update update) throws BojiaBotUpdateIllegal {
