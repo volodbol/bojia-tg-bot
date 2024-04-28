@@ -14,15 +14,15 @@ public class BojiaBotUserServiceImpl implements BojiaBotUserService {
     private final BojiaBotUserRepository botUserRepository;
 
     @Override
-    public BojiaBotUser save(BojiaBotUser bojiaBotUser) {
-        return this.botUserRepository.save(bojiaBotUser);
+    public BojiaBotUser getOrCreateUser(Update update) {
+        var user = update.message().from();
+        return this.botUserRepository.findById(user.id())
+                .orElseGet(() -> this.botUserRepository.save(new BojiaBotUser(update)));
     }
 
     @Override
-    public BojiaBotUser extractAndSaveUser(Update update) {
-        var user = update.message().from();
-        var chat = update.message().chat();
-        return this.botUserRepository.save(new BojiaBotUser(user, chat));
+    public BojiaBotUser save(BojiaBotUser bojiaBotUser) {
+        return this.botUserRepository.save(bojiaBotUser);
     }
 
 }

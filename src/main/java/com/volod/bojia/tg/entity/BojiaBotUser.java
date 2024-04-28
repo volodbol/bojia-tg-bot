@@ -1,13 +1,14 @@
 package com.volod.bojia.tg.entity;
 
-import com.pengrad.telegrambot.model.Chat;
-import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.Update;
 import com.volod.bojia.tg.constant.PostgresConstants;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
+
+import static java.util.Objects.nonNull;
 
 @Entity
 @Table(name = PostgresConstants.BOJIA_BOT_USER_TABLE)
@@ -26,10 +27,29 @@ public class BojiaBotUser {
     @Column
     private String prompt;
 
-    public BojiaBotUser(User user, Chat chat) {
+    public BojiaBotUser(Update update) {
+        var user = update.message().from();
+        var chat = update.message().chat();
         this.id = user.id();
         this.chatId = chat.id();
         this.firstName = user.firstName();
+    }
+
+    public BojiaBotUser(Update update, String prompt) {
+        var user = update.message().from();
+        var chat = update.message().chat();
+        this.id = user.id();
+        this.chatId = chat.id();
+        this.firstName = user.firstName();
+        this.prompt = prompt;
+    }
+
+    public String getPromptOrDefault() {
+        if (nonNull(this.prompt)) {
+            return this.prompt;
+        } else {
+            return "You don't have any prompt";
+        }
     }
 
     @Override

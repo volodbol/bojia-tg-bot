@@ -7,6 +7,7 @@ import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.ADD_PROMPT;
 import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.HELP;
 import static java.util.Objects.isNull;
 
@@ -16,7 +17,8 @@ public abstract class BojiaBotCommandService {
     protected final BojiaExceptionHandlerService exceptionHandlerService;
 
     private final Map<String, Consumer<Update>> commandMappings = Map.of(
-            HELP.getCommand(), this::processHelpCommand
+            HELP.getCommand(), this::processHelpCommand,
+            ADD_PROMPT.getCommand(), this::processAddPromptCommand
     );
 
     protected BojiaBotCommandService(
@@ -49,6 +51,7 @@ public abstract class BojiaBotCommandService {
     }
 
     public abstract void processHelpCommand(Update update);
+    public abstract void processAddPromptCommand(Update update);
     public abstract void processUnknownCommand(Update update);
 
 }
