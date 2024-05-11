@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import com.volod.bojia.tg.domain.bot.BojiaBotMyCommand;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.entity.BojiaBotUser;
 import com.volod.bojia.tg.service.bot.BojiaBotCommandService;
@@ -37,10 +38,16 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
     @Override
     public void processHelpCommand(Update update) {
         var sendResponse = this.bot.execute(
-                new SendMessage(
-                        update.message().chat().id(),
-                        "Help command received"
-                )
+                MessageMarkdownV2.builder()
+                        .chatId(update.message().chat().id())
+                        .text("Bojia is a bot that can monitor your favorite job websites ")
+                        .text("and notify you that a new vacancy is posted helping you answer faster.")
+                        .text("\n\nWe will ask you to add a prompt about your experience to generate a cover letter ")
+                        .text("using AI which you can edit and send with your CV.")
+                        .bold("\n\nAvailable commands:")
+                        .text("\n" + BojiaBotMyCommand.getJoinedCommands())
+                        .build()
+                        .toSendMessage()
         );
         this.logResponse("processHelpCommand", sendResponse);
     }

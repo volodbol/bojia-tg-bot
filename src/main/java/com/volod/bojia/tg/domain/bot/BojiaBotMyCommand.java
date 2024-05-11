@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Getter
@@ -23,6 +24,12 @@ public enum BojiaBotMyCommand {
         return Arrays.stream(BojiaBotMyCommand.values())
                 .map(command -> new BotCommand(command.getCommand(), command.getDescription()))
                 .toArray(BotCommand[]::new);
+    }
+
+    public static String getJoinedCommands() {
+        return Arrays.stream(BojiaBotMyCommand.values())
+                .map(BojiaBotMyCommand::getCommand)
+                .collect(Collectors.joining("\n"));
     }
 
 }
