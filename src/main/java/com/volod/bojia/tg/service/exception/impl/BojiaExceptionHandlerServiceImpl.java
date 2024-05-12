@@ -30,7 +30,7 @@ public class BojiaExceptionHandlerServiceImpl implements BojiaExceptionHandlerSe
 
     @Override
     public void publishException(Throwable ex) {
-        LOGGER.debug(BojiaLogConstants.APPLICATION_PREFIX + "exception occurred", ex);
+        LOGGER.debug(BojiaLogConstants.APPLICATION_PREFIX + "Exception occurred", ex);
         for (var chatId : this.applicationProperties.getAdminChatIds()) {
             try {
                 var messageResponse = this.bot.execute(new SendMessage(chatId, "Exception occurred:"));
@@ -58,8 +58,8 @@ public class BojiaExceptionHandlerServiceImpl implements BojiaExceptionHandlerSe
             @Nullable BaseResponse response,
             @Nullable RuntimeException rex
     ) {
-        LOGGER.error(BojiaLogConstants.APPLICATION_PREFIX + "exception occurred", ex);
-        LOGGER.error(BojiaLogConstants.BOT_PREFIX + "can't send message with exception: {}", response, rex);
+        LOGGER.error(BojiaLogConstants.APPLICATION_PREFIX + "Exception occurred", ex);
+        LOGGER.error(BojiaLogConstants.BOT_ERROR + "Can't send message with exception: {}", response, rex);
     }
 
 }
