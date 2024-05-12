@@ -9,8 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.ADD_PROMPT;
-import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.HELP;
+import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.*;
 import static java.util.Objects.isNull;
 
 @Slf4j
@@ -21,7 +20,8 @@ public abstract class BojiaBotCommandService {
 
     private final Map<String, Consumer<Update>> commandMappings = Map.of(
             HELP.getCommand(), this::processHelpCommand,
-            ADD_PROMPT.getCommand(), this::processAddPromptCommand
+            ADD_PROMPT.getCommand(), this::processAddPromptCommand,
+            SEARCHES.getCommand(), this::processSearchesCommand
     );
 
     protected BojiaBotCommandService(
@@ -57,6 +57,7 @@ public abstract class BojiaBotCommandService {
 
     public abstract void processHelpCommand(Update update);
     public abstract void processAddPromptCommand(Update update);
+    public abstract void processSearchesCommand(Update update);
     public abstract void processUnknownCommand(Update update);
 
 }

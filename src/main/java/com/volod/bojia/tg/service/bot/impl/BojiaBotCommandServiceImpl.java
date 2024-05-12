@@ -85,6 +85,21 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
     }
 
     @Override
+    public void processSearchesCommand(Update update) {
+        var user = this.botUserService.getOrCreateUser(update);
+        var sendResponse = this.bot.execute(
+                MessageMarkdownV2.builder()
+                        .chatId(update.message().chat().id())
+                        .text("\n\nTo remove search send remove command and search id: ")
+                        .inlineCode("/remove 432345")
+                        .text("%n%n%s".formatted(user.getSearchesOrDefault()))
+                        .build()
+                        .toSendMessage()
+        );
+        this.logResponse("processSearchesCommand", sendResponse);
+    }
+
+    @Override
     public void processUnknownCommand(Update update) {
         var sendResponse = this.bot.execute(
                 MessageMarkdownV2.builder()

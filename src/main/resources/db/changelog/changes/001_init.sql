@@ -6,10 +6,10 @@ CREATE TABLE IF NOT EXISTS bojia_bot_details
 
 CREATE TABLE IF NOT EXISTS bojia_bot_user
 (
-    id         INTEGER       NOT NULL PRIMARY KEY,
-    chat_id    INTEGER       NOT NULL,
-    first_name VARCHAR(512)  NOT NULL,
-    prompt     VARCHAR(2048) NOT NULL
+    id         INTEGER      NOT NULL PRIMARY KEY,
+    chat_id    INTEGER      NOT NULL,
+    first_name VARCHAR(512) NOT NULL,
+    prompt     VARCHAR(2048)
 );
 
 CREATE TABLE IF NOT EXISTS bojia_bot_user_search

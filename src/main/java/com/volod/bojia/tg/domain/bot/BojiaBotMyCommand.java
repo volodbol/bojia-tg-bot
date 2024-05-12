@@ -11,7 +11,8 @@ import java.util.stream.Collectors;
 @Getter
 public enum BojiaBotMyCommand {
     HELP("help", "see help page"),
-    ADD_PROMPT("prompt", "add prompt to use for cover letter generation");
+    ADD_PROMPT("prompt", "add prompt to use for cover letter generation"),
+    SEARCHES("searches", "list of all searches");
 
     private final String command;
     private final String description;
