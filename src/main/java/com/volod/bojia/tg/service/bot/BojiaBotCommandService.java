@@ -2,6 +2,7 @@ package com.volod.bojia.tg.service.bot;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.domain.exception.BojiaBotUpdateIllegal;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,9 +41,7 @@ public abstract class BojiaBotCommandService {
             var command = message.text().split(" ")[0];
             this.commandMappings.getOrDefault(command, this::processUnknownCommand).accept(update);
             return update.updateId();
-        } catch (BojiaBotUpdateIllegal ex) {
-            LOGGER.debug("Can't process update", ex);
-        } catch (RuntimeException ex) {
+        } catch (BojiaBotUpdateIllegal | RuntimeException ex) {
             this.exceptionHandlerService.publishException(ex);
         }
         this.processUnknownCommand(update);
@@ -60,6 +59,15 @@ public abstract class BojiaBotCommandService {
     public abstract void processAddPromptCommand(Update update);
     public abstract void processSearchesCommand(Update update);
     public abstract void processRemoveSearchCommand(Update update);
-    public abstract void processUnknownCommand(Update update);
+
+    public void processUnknownCommand(Update update) {
+        this.bot.execute(
+                MessageMarkdownV2.builder()
+                        .chatId(update.message().chat().id())
+                        .text("Unknown command received. Send /help to see available commands")
+                        .build()
+                        .toSendMessage()
+        );
+    }
 
 }

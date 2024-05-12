@@ -131,18 +131,6 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         }
     }
 
-    @Override
-    public void processUnknownCommand(Update update) {
-        var sendResponse = this.bot.execute(
-                MessageMarkdownV2.builder()
-                        .chatId(update.message().chat().id())
-                        .text("Unknown command received. Send /help to see available commands")
-                        .build()
-                        .toSendMessage()
-        );
-        this.logResponse("processUnknownCommand", sendResponse);
-    }
-
     // -----------------------------------------------------------------------------------------------------------------
     // PRIVATE METHODS
     // -----------------------------------------------------------------------------------------------------------------
