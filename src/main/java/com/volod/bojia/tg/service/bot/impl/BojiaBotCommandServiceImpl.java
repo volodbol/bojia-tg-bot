@@ -8,6 +8,7 @@ import com.volod.bojia.tg.domain.bot.BojiaBotMyCommand;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.entity.BojiaBotUser;
 import com.volod.bojia.tg.service.bot.BojiaBotCommandService;
+import com.volod.bojia.tg.service.bot.BojiaBotUserSearchService;
 import com.volod.bojia.tg.service.bot.BojiaBotUserService;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,24 +16,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.ADD_PROMPT;
+import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.REMOVE_SEARCH;
 
 @Slf4j
 @Service
 public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
 
     private final BojiaBotUserService botUserService;
+    private final BojiaBotUserSearchService botUserSearchService;
 
     @Autowired
     public BojiaBotCommandServiceImpl(
             TelegramBot bot,
             BojiaExceptionHandlerService exceptionHandlerService,
-            BojiaBotUserService botUserService
+            BojiaBotUserService botUserService,
+            BojiaBotUserSearchService botUserSearchService
     ) {
         super(
                 bot,
                 exceptionHandlerService
         );
         this.botUserService = botUserService;
+        this.botUserSearchService = botUserSearchService;
     }
 
     @Override
@@ -97,6 +102,33 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                         .toSendMessage()
         );
         this.logResponse("processSearchesCommand", sendResponse);
+    }
+
+    @Override
+    public void processRemoveSearchCommand(Update update) {
+        try {
+            var message = update.message();
+            var searchId = Long.parseLong(message.text().substring(REMOVE_SEARCH.getCommand().length()).trim());
+            this.botUserSearchService.removeSearch(searchId);
+            var sendResponse = this.bot.execute(
+                    MessageMarkdownV2.builder()
+                            .chatId(update.message().chat().id())
+                            .text("Search with id: %s successfully deleted".formatted(searchId))
+                            .build()
+                            .toSendMessage()
+            );
+            this.logResponse("processRemoveSearchCommand", sendResponse);
+        } catch (NumberFormatException ex) {
+            var sendResponse = this.bot.execute(
+                    MessageMarkdownV2.builder()
+                            .chatId(update.message().chat().id())
+                            .text("Can't delete search. Make sure that you sent correct command with proper id value: ")
+                            .inlineCode("/remove 432345")
+                            .build()
+                            .toSendMessage()
+            );
+            this.logResponse("processRemoveSearchCommand", sendResponse);
+        }
     }
 
     @Override

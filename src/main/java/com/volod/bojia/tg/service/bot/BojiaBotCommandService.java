@@ -21,7 +21,8 @@ public abstract class BojiaBotCommandService {
     private final Map<String, Consumer<Update>> commandMappings = Map.of(
             HELP.getCommand(), this::processHelpCommand,
             ADD_PROMPT.getCommand(), this::processAddPromptCommand,
-            SEARCHES.getCommand(), this::processSearchesCommand
+            SEARCHES.getCommand(), this::processSearchesCommand,
+            REMOVE_SEARCH.getCommand(), this::processRemoveSearchCommand
     );
 
     protected BojiaBotCommandService(
@@ -58,6 +59,7 @@ public abstract class BojiaBotCommandService {
     public abstract void processHelpCommand(Update update);
     public abstract void processAddPromptCommand(Update update);
     public abstract void processSearchesCommand(Update update);
+    public abstract void processRemoveSearchCommand(Update update);
     public abstract void processUnknownCommand(Update update);
 
 }
