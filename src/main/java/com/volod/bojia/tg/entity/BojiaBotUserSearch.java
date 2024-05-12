@@ -1,60 +1,34 @@
 package com.volod.bojia.tg.entity;
 
-import com.pengrad.telegrambot.model.Update;
 import com.volod.bojia.tg.constant.PostgresConstants;
+import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.List;
 import java.util.Objects;
 
-import static java.util.Objects.nonNull;
-
 @Entity
-@Table(name = PostgresConstants.BOJIA_BOT_USER_TABLE)
+@Table(name = PostgresConstants.BOJIA_BOT_USER_SEARCH)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class BojiaBotUser {
+public class BojiaBotUserSearch {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bojia_bot_user_search_id_seq")
+    @SequenceGenerator(name = "bojia_bot_user_search_id_seq", allocationSize = 1)
     private Long id;
-    @Column(nullable = false)
-    private Long chatId;
-    @Column(nullable = false)
-    private String firstName;
-    @Column(nullable = false)
-    private String prompt;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     @ToString.Exclude
-    private List<BojiaBotUserSearch> searches;
-
-    public BojiaBotUser(Update update) {
-        var user = update.message().from();
-        var chat = update.message().chat();
-        this.id = user.id();
-        this.chatId = chat.id();
-        this.firstName = user.firstName();
-    }
-
-    public BojiaBotUser(Update update, String prompt) {
-        var user = update.message().from();
-        var chat = update.message().chat();
-        this.id = user.id();
-        this.chatId = chat.id();
-        this.firstName = user.firstName();
-        this.prompt = prompt;
-    }
-
-    public String getPromptOrDefault() {
-        if (nonNull(this.prompt)) {
-            return this.prompt;
-        } else {
-            return "You don't have any prompt";
-        }
-    }
+    private BojiaBotUser user;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private VacancyProvider provider;
+    @Column(nullable = false)
+    private String keywords;
 
     @Override
     public final boolean equals(Object o) {

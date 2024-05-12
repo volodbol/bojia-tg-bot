@@ -7,7 +7,15 @@ CREATE TABLE IF NOT EXISTS bojia_bot_details
 CREATE TABLE IF NOT EXISTS bojia_bot_user
 (
     id         INTEGER NOT NULL PRIMARY KEY,
-    chat_id    INTEGER,
-    first_name VARCHAR(512),
-    prompt     VARCHAR(2048)
+    chat_id    INTEGER NOT NULL,
+    first_name VARCHAR(512) NOT NULL,
+    prompt     VARCHAR(2048) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS bojia_bot_user_search
+(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    provider VARCHAR(512) NOT NULL,
+    keywords VARCHAR(512) NOT NULL
 );

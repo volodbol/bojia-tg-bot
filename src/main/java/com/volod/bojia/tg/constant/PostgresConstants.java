@@ -6,4 +6,5 @@ import lombok.experimental.UtilityClass;
 public class PostgresConstants {
     public final String BOJIA_BOT_DETAILS_TABLE = "bojia_bot_details";
     public final String BOJIA_BOT_USER_TABLE = "bojia_bot_user";
+    public final String BOJIA_BOT_USER_SEARCH = "bojia_bot_user_search";
 }
