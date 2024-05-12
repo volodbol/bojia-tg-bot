@@ -14,9 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
@@ -25,10 +24,9 @@ import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 @RequiredArgsConstructor
 public class BojiaExceptionHandlerServiceImpl implements BojiaExceptionHandlerService {
 
-    private static final DateTimeFormatter DTF = ISO_INSTANT.withZone(ZoneId.of("Europe/Kyiv"));
-
     private final TelegramBot bot;
     private final BojiaApplicationProperties applicationProperties;
+    private final Clock clock;
 
     @Override
     public void publishException(Throwable ex) {
@@ -38,7 +36,7 @@ public class BojiaExceptionHandlerServiceImpl implements BojiaExceptionHandlerSe
                 var messageResponse = this.bot.execute(new SendMessage(chatId, "Exception occurred:"));
                 var documentResponse = this.bot.execute(
                         new SendDocument(chatId, Throwables.getStackTraceAsString(ex).getBytes())
-                                .fileName("Exception-" + DTF.format(Instant.now()) + ".txt")
+                                .fileName("Exception-" + ISO_INSTANT.format(Instant.now(this.clock)) + ".txt")
                                 .replyParameters(
                                         new ReplyParameters(
                                                 messageResponse.message().messageId(),
