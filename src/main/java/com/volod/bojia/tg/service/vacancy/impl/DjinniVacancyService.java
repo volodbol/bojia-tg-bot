@@ -1,8 +1,10 @@
 package com.volod.bojia.tg.service.vacancy.impl;
 
+import com.volod.bojia.tg.domain.exception.BojiaVacancyParseException;
 import com.volod.bojia.tg.domain.vacancy.Vacancies;
 import com.volod.bojia.tg.domain.vacancy.Vacancy;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
+import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import com.volod.bojia.tg.service.vacancy.VacancyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,8 @@ public class DjinniVacancyService implements VacancyService {
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
             .withZone(ZoneId.systemDefault());
 
+    private final BojiaExceptionHandlerService exceptionHandlerService;
+
     @Override
     public Vacancies getVacancies(List<String> searchKeywords, Instant from) {
         try {
@@ -35,7 +39,9 @@ public class DjinniVacancyService implements VacancyService {
             var jobs = page.getElementsByAttributeValueStarting("id", "job-item-");
             return this.getVacancies(jobs, from);
         } catch (IOException | RuntimeException ex) {
-            LOGGER.debug("Can't get last vacancies", ex);
+            this.exceptionHandlerService.publishException(
+                    BojiaVacancyParseException.getVacancies(this.getProvider(), ex)
+            );
             return Vacancies.empty();
         }
     }
@@ -48,7 +54,9 @@ public class DjinniVacancyService implements VacancyService {
             var splitHeader = pageHeader.eachText().get(0).split(" ");
             return Integer.parseInt(splitHeader[splitHeader.length - 1]);
         } catch (IOException | RuntimeException ex) {
-            LOGGER.debug("Can't get number of vacancies", ex);
+            this.exceptionHandlerService.publishException(
+                    BojiaVacancyParseException.getNumberOfVacancies(this.getProvider(), ex)
+            );
             return 0;
         }
     }
@@ -107,7 +115,9 @@ public class DjinniVacancyService implements VacancyService {
                         )
                 );
             } catch (RuntimeException ex) {
-                LOGGER.debug("Can't parse vacancy, {}", element, ex);
+                this.exceptionHandlerService.publishException(
+                        BojiaVacancyParseException.parseError(element, this.getProvider(), ex)
+                );
             }
         }
         return Vacancies.of(vacancies);

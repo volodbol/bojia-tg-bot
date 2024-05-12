@@ -1,24 +1,32 @@
 package com.volod.bojia.tg.service.vacancy.impl;
 
+import com.volod.bojia.tg.configuration.BojiaApplicationConfiguration;
+import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @Tag("it")
 @SpringBootTest(classes = {
+        BojiaApplicationConfiguration.class,
         DjinniVacancyService.class
 })
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class DjinniVacancyServiceTest {
 
-    private final DjinniVacancyService componentUnderTest;
+    @MockBean
+    private BojiaExceptionHandlerService exceptionHandlerService;
+    @Autowired
+    private DjinniVacancyService componentUnderTest;
 
     @Test
     void getVacanciesTest() {
@@ -30,6 +38,7 @@ class DjinniVacancyServiceTest {
         var actual = this.componentUnderTest.getVacancies(searchKeywords, from);
 
         // Assert
+        verifyNoInteractions(this.exceptionHandlerService);
         assertThat(actual.values()).isNotEmpty();
     }
 
@@ -42,6 +51,7 @@ class DjinniVacancyServiceTest {
         var actual = this.componentUnderTest.getNumberOfVacancies(searchKeywords);
 
         // Assert
+        verifyNoInteractions(this.exceptionHandlerService);
         assertThat(actual).isNotZero();
     }
 
