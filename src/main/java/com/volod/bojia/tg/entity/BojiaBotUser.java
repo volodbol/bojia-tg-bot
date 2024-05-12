@@ -2,16 +2,16 @@ package com.volod.bojia.tg.entity;
 
 import com.pengrad.telegrambot.model.Update;
 import com.volod.bojia.tg.constant.PostgresConstants;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Entity
 @Table(name = PostgresConstants.BOJIA_BOT_USER_TABLE)
@@ -29,9 +29,6 @@ public class BojiaBotUser {
     private String firstName;
     @Column
     private String prompt;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    @ToString.Exclude
-    private List<BojiaBotUserSearch> searches;
 
     public BojiaBotUser(Update update) {
         var user = update.message().from();
@@ -55,16 +52,6 @@ public class BojiaBotUser {
             return this.prompt;
         } else {
             return "You don't have any prompt";
-        }
-    }
-
-    public String getSearchesOrDefault() {
-        if (!isEmpty(this.searches)) {
-            return this.searches.stream()
-                    .map(search -> "%s - %s".formatted(search.getId(), search.getKeywords()))
-                    .collect(Collectors.joining(",\n"));
-        } else {
-            return "You have no searches";
         }
     }
 

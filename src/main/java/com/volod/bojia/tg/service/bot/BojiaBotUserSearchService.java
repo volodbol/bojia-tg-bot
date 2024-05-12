@@ -1,7 +1,8 @@
 package com.volod.bojia.tg.service.bot;
 
-import com.volod.bojia.tg.entity.BojiaBotUser;
+import com.volod.bojia.tg.entity.BojiaBotUserSearches;
 
 public interface BojiaBotUserSearchService {
-    void delete(BojiaBotUser user, Long id);
+    BojiaBotUserSearches getByUserId(Long userId);
+    void delete(Long userId, Long id);
 }

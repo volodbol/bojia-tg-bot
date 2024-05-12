@@ -91,13 +91,13 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
 
     @Override
     public void processSearchesCommand(Update update) {
-        var user = this.botUserService.getOrCreateUser(update);
+        var searches = this.botUserSearchService.getByUserId(update.message().from().id());
         var sendResponse = this.bot.execute(
                 MessageMarkdownV2.builder()
                         .chatId(update.message().chat().id())
                         .text("\n\nTo remove search send remove command and search id: ")
                         .inlineCode("/remove 432345")
-                        .text("%n%n%s".formatted(user.getSearchesOrDefault()))
+                        .text("%n%n%s".formatted(searches.getKeywordsOrDefault()))
                         .build()
                         .toSendMessage()
         );
@@ -109,8 +109,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         try {
             var message = update.message();
             var searchId = Long.parseLong(message.text().substring(REMOVE_SEARCH.getCommand().length()).trim());
-            var user = this.botUserService.getOrCreateUser(update);
-            this.botUserSearchService.delete(user, searchId);
+            this.botUserSearchService.delete(message.from().id(), searchId);
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update.message().chat().id())
