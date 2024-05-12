@@ -32,8 +32,15 @@ public class DjinniVacancyService implements VacancyService {
 
     private final BojiaExceptionHandlerService exceptionHandlerService;
 
+    /**
+     * Returns last vacancies, usually available from the first page.
+     *
+     * @param searchKeywords keywords to search from job
+     * @param from time to return last vacancies from
+     * @return last vacancies with time > from
+     */
     @Override
-    public Vacancies getVacancies(List<String> searchKeywords, Instant from) {
+    public Vacancies getLastVacancies(List<String> searchKeywords, Instant from) {
         try {
             var page = Jsoup.connect(this.getUrl(searchKeywords)).execute().parse();
             var jobs = page.getElementsByAttributeValueStarting("id", "job-item-");

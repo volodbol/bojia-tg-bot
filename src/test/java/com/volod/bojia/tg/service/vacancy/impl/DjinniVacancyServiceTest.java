@@ -29,13 +29,13 @@ class DjinniVacancyServiceTest {
     private DjinniVacancyService componentUnderTest;
 
     @Test
-    void getVacanciesTest() {
+    void getLastVacanciesTest() {
         // Arrange
         var searchKeywords = List.of("middle", "java");
         var from = Instant.parse("2024-05-05T10:15:30.00Z");
 
         // Act
-        var actual = this.componentUnderTest.getVacancies(searchKeywords, from);
+        var actual = this.componentUnderTest.getLastVacancies(searchKeywords, from);
 
         // Assert
         verifyNoInteractions(this.exceptionHandlerService);
