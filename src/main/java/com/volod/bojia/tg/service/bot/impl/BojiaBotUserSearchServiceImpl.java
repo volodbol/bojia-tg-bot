@@ -1,5 +1,6 @@
 package com.volod.bojia.tg.service.bot.impl;
 
+import com.volod.bojia.tg.entity.BojiaBotUser;
 import com.volod.bojia.tg.repository.BojiaBotUserSearchRepository;
 import com.volod.bojia.tg.service.bot.BojiaBotUserSearchService;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,7 @@ public class BojiaBotUserSearchServiceImpl implements BojiaBotUserSearchService 
     private final BojiaBotUserSearchRepository userSearchRepository;
 
     @Override
-    public void removeSearch(Long id) {
-        this.userSearchRepository.deleteById(id);
+    public void delete(BojiaBotUser user, Long id) {
+        this.userSearchRepository.deleteByUserAndId(user, id);
     }
-
 }

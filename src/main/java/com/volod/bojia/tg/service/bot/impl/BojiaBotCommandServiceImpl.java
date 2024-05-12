@@ -109,7 +109,8 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         try {
             var message = update.message();
             var searchId = Long.parseLong(message.text().substring(REMOVE_SEARCH.getCommand().length()).trim());
-            this.botUserSearchService.removeSearch(searchId);
+            var user = this.botUserService.getOrCreateUser(update);
+            this.botUserSearchService.delete(user, searchId);
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update.message().chat().id())
