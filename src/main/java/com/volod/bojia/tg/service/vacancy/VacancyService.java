@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.List;
 
 public interface VacancyService {
-    Vacancies getLastPublishedVacancies(List<String> searchKeywords, Instant lastFetch);
+    Vacancies getVacancies(List<String> searchKeywords, Instant from);
     int getNumberOfVacancies(List<String> searchKeywords);
     VacancyProvider getProvider();
     String getUrl(List<String> searchKeywords);

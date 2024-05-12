@@ -1,29 +1,43 @@
 package com.volod.bojia.tg.service.vacancy.impl;
 
 import com.volod.bojia.tg.domain.vacancy.Vacancies;
+import com.volod.bojia.tg.domain.vacancy.Vacancy;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.service.vacancy.VacancyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+
+import static com.volod.bojia.tg.constant.JsoupConstants.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DjinniVacancyService implements VacancyService {
 
-    private final Clock clock;
+    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+            .withZone(ZoneId.systemDefault());
 
     @Override
-    public Vacancies getLastPublishedVacancies(List<String> searchKeywords, Instant lastFetch) {
-        return new Vacancies(new HashSet<>(), Instant.now(this.clock));
+    public Vacancies getVacancies(List<String> searchKeywords, Instant from) {
+        try {
+            var page = Jsoup.connect(this.getUrl(searchKeywords)).execute().parse();
+            var jobs = page.getElementsByAttributeValueStarting("id", "job-item-");
+            return this.getVacancies(jobs, from);
+        } catch (IOException | RuntimeException ex) {
+            LOGGER.debug("Can't get last vacancies", ex);
+            return Vacancies.empty();
+        }
     }
 
     @Override
@@ -57,6 +71,46 @@ public class DjinniVacancyService implements VacancyService {
     @Override
     public String getUrl() {
         return "https://djinni.co/jobs/";
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // PRIVATE METHODS
+    // -----------------------------------------------------------------------------------------------------------------
+    @SuppressWarnings("DataFlowIssue")
+    private Vacancies getVacancies(Elements elements, Instant from) {
+        var vacancies = new HashSet<Vacancy>();
+        for (var element : elements) {
+            try {
+                var counts = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__counts");
+                var published = counts.first().getElementsByAttribute(TITLE).attr(TITLE);
+                var publishedTime = Instant.from(DTF.parse(published));
+                if (publishedTime.isBefore(from)) {
+                    continue;
+                }
+                var company = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__pic");
+                var companyText = company.parents().first().text();
+                var title = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__title");
+                var titleText = title.text();
+                var url = title.first().getElementsByAttribute(HREF).attr(HREF);
+                var description = element.getElementsByAttributeValueStarting(ID, "job-description");
+                var descriptionText = description.attr("data-original-text");
+                var shortDetails = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__job-info");
+                var shortDetailsList = shortDetails.eachText();
+                vacancies.add(
+                        new Vacancy(
+                                companyText,
+                                titleText,
+                                new LinkedList<>(shortDetailsList),
+                                descriptionText,
+                                this.getUrl() + url.replace("/jobs/", ""),
+                                publishedTime
+                        )
+                );
+            } catch (RuntimeException ex) {
+                LOGGER.debug("Can't parse vacancy, {}", element, ex);
+            }
+        }
+        return Vacancies.of(vacancies);
     }
 
 }
