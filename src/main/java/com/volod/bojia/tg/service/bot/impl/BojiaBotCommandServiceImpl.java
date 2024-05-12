@@ -6,7 +6,12 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import com.volod.bojia.tg.domain.bot.BojiaBotMyCommand;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
+import com.volod.bojia.tg.domain.search.AddSearchMiddleware;
+import com.volod.bojia.tg.domain.search.KeywordsPresentAddSearchMiddleware;
+import com.volod.bojia.tg.domain.search.PromptExistAddSearchMiddleware;
+import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.entity.BojiaBotUser;
+import com.volod.bojia.tg.entity.BojiaBotUserSearch;
 import com.volod.bojia.tg.service.bot.BojiaBotCommandService;
 import com.volod.bojia.tg.service.bot.BojiaBotUserSearchService;
 import com.volod.bojia.tg.service.bot.BojiaBotUserService;
@@ -15,8 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.ADD_PROMPT;
-import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.REMOVE_SEARCH;
+import java.util.List;
+
+import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.*;
 
 @Slf4j
 @Service
@@ -24,6 +30,8 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
 
     private final BojiaBotUserService botUserService;
     private final BojiaBotUserSearchService botUserSearchService;
+
+    private final AddSearchMiddleware addSearchMiddleware;
 
     @Autowired
     public BojiaBotCommandServiceImpl(
@@ -38,6 +46,12 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         );
         this.botUserService = botUserService;
         this.botUserSearchService = botUserSearchService;
+        this.addSearchMiddleware = AddSearchMiddleware.link(
+                new PromptExistAddSearchMiddleware(bot, botUserService),
+                List.of(
+                        new KeywordsPresentAddSearchMiddleware(bot)
+                )
+        );
     }
 
     @Override
@@ -60,7 +74,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
     @Override
     public void processAddPromptCommand(Update update) {
         var message = update.message();
-        var prompt = message.text().substring(ADD_PROMPT.getCommand().length());
+        var prompt = message.text().substring(ADD_PROMPT.getCommand().length()).trim();
         SendResponse sendResponse;
         if (prompt.isBlank()) {
             var user = this.botUserService.getOrCreateUser(update);
@@ -102,6 +116,25 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                         .toSendMessage()
         );
         this.logResponse("processSearchesCommand", sendResponse);
+    }
+
+    @Override
+    public void processAddDjinniSearchCommand(Update update) {
+        var message = update.message();
+        var user = this.botUserService.getOrCreateUser(update);
+        var keywords = message.text().substring(DJINNI.getCommand().length()).trim();
+        if (this.addSearchMiddleware.check(update))  {
+            var search = this.botUserSearchService.save(new BojiaBotUserSearch(user, VacancyProvider.DJINNI, keywords));
+            var sendResponse = this.bot.execute(
+                    MessageMarkdownV2.builder()
+                            .chatId(message.chat().id())
+                            .text("Search successfully saved!")
+                            .text("%n%n%s - %s".formatted(search.getId(), search.getKeywords()))
+                            .build()
+                            .toSendMessage()
+            );
+            this.logResponse("processAddDjinniSearchCommand", sendResponse);
+        }
     }
 
     @Override

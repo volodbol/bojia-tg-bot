@@ -23,6 +23,7 @@ public abstract class BojiaBotCommandService {
             HELP.getCommand(), this::processHelpCommand,
             ADD_PROMPT.getCommand(), this::processAddPromptCommand,
             SEARCHES.getCommand(), this::processSearchesCommand,
+            DJINNI.getCommand(), this::processAddDjinniSearchCommand,
             REMOVE_SEARCH.getCommand(), this::processRemoveSearchCommand
     );
 
@@ -58,6 +59,7 @@ public abstract class BojiaBotCommandService {
     public abstract void processHelpCommand(Update update);
     public abstract void processAddPromptCommand(Update update);
     public abstract void processSearchesCommand(Update update);
+    public abstract void processAddDjinniSearchCommand(Update update);
     public abstract void processRemoveSearchCommand(Update update);
 
     public void processUnknownCommand(Update update) {

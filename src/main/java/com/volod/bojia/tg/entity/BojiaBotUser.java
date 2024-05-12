@@ -11,6 +11,7 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Entity
@@ -53,6 +54,10 @@ public class BojiaBotUser {
         } else {
             return "You don't have any prompt";
         }
+    }
+
+    public boolean isPromptAbsent() {
+        return isNull(this.prompt) || this.prompt.isBlank();
     }
 
     @Override

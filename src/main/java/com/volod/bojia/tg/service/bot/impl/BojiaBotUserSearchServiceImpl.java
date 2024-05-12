@@ -1,5 +1,6 @@
 package com.volod.bojia.tg.service.bot.impl;
 
+import com.volod.bojia.tg.entity.BojiaBotUserSearch;
 import com.volod.bojia.tg.entity.BojiaBotUserSearches;
 import com.volod.bojia.tg.repository.BojiaBotUserSearchRepository;
 import com.volod.bojia.tg.service.bot.BojiaBotUserSearchService;
@@ -15,6 +16,12 @@ public class BojiaBotUserSearchServiceImpl implements BojiaBotUserSearchService 
     @Override
     public BojiaBotUserSearches getByUserId(Long userId) {
         return new BojiaBotUserSearches(this.userSearchRepository.findAllByUserId(userId));
+    }
+
+    @Override
+    public BojiaBotUserSearch save(BojiaBotUserSearch search) {
+        return this.userSearchRepository.findByUserIdAndProviderAndKeywords(search)
+                .orElseGet(() -> this.userSearchRepository.save(search));
     }
 
     @Override

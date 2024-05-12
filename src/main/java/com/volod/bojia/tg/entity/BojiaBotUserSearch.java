@@ -30,6 +30,16 @@ public class BojiaBotUserSearch {
     @Column(nullable = false)
     private String keywords;
 
+    public BojiaBotUserSearch(
+            BojiaBotUser user,
+            VacancyProvider provider,
+            String keywords
+    ) {
+        this.user = user;
+        this.provider = provider;
+        this.keywords = keywords;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
