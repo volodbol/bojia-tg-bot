@@ -29,7 +29,7 @@ public class PromptAddedAddSearchMiddleware extends AddSearchMiddleware {
             );
             return false;
         }
-        return checkNext(update);
+        return this.checkNext(update);
     }
 
 }

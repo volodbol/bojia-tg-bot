@@ -29,7 +29,7 @@ public class KeywordsPresentAddSearchMiddleware extends AddSearchMiddleware {
             );
             return false;
         }
-        return checkNext(update);
+        return this.checkNext(update);
     }
 
 }
