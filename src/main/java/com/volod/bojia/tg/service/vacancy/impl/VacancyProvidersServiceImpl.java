@@ -19,15 +19,10 @@ public class VacancyProvidersServiceImpl implements VacancyProvidersService {
 
     @Autowired
     public VacancyProvidersServiceImpl(
-            BojiaExceptionHandlerService exceptionHandlerService
+            List<VacancyProviderService> vacancyProviderServices
     ) {
         this.vacancyServices = new EnumMap<>(VacancyProvider.class);
-        this.vacancyServices.put(
-                VacancyProvider.DJINNI,
-                new DjinniVacancyProviderService(
-                        exceptionHandlerService
-                )
-        );
+        vacancyProviderServices.forEach(service -> this.vacancyServices.put(service.getProvider(), service));
     }
 
     @Override
