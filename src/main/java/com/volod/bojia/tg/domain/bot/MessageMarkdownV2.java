@@ -1,5 +1,6 @@
 package com.volod.bojia.tg.domain.bot;
 
+import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.EqualsAndHashCode;
@@ -46,6 +47,11 @@ public class MessageMarkdownV2 {
 
         public MessageMarkdownV2Builder chatId(Object chatId) {
             this.chatId = chatId;
+            return this;
+        }
+
+        public MessageMarkdownV2Builder chatId(Update update) {
+            this.chatId = update.message().chat().id();
             return this;
         }
 

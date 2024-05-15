@@ -2,7 +2,6 @@ package com.volod.bojia.tg.service.bot.impl;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import com.volod.bojia.tg.domain.bot.BojiaBotMyCommand;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
@@ -92,12 +91,13 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                             .toSendMessage()
             );
         } else {
-            this.botUserService.save(new BojiaBotUser(update, prompt));
+            var user = this.botUserService.save(new BojiaBotUser(update, prompt));
             sendResponse = this.bot.execute(
-                    new SendMessage(
-                            update.message().chat().id(),
-                            "Prompt successfully saved"
-                    )
+                    MessageMarkdownV2.builder()
+                            .chatId(update)
+                            .text("Prompt successfully saved: %s".formatted(user.getPromptOrDefault()))
+                            .build()
+                            .toSendMessage()
             );
         }
         this.logResponse("processAddPromptCommand", sendResponse);
@@ -123,7 +123,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         var message = update.message();
         var user = this.botUserService.getOrCreateUser(update);
         var keywords = message.text().substring(DJINNI.getCommand().length()).trim();
-        if (this.addSearchMiddleware.check(update))  {
+        if (this.addSearchMiddleware.check(update)) {
             var search = this.botUserSearchService.save(new BojiaBotUserSearch(user, VacancyProvider.DJINNI, keywords));
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
