@@ -27,9 +27,10 @@ import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.*;
 @Service
 public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
 
+    // Services
     private final BojiaBotUserService botUserService;
     private final BojiaBotUserSearchService botUserSearchService;
-
+    // Middleware
     private final AddSearchMiddleware addSearchMiddleware;
 
     @Autowired
@@ -120,12 +121,13 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
     }
 
     @Override
-    public void processAddDjinniSearchCommand(Update update) {
+    public void processAddSearchCommand(Update update, VacancyProvider provider) {
         var message = update.message();
         var user = this.botUserService.getOrCreateUser(update);
-        var keywords = message.text().substring(DJINNI.getCommand().length()).trim();
-        if (this.addSearchMiddleware.check(update)) {
-            var search = this.botUserSearchService.save(new BojiaBotUserSearch(user, VacancyProvider.DJINNI, keywords));
+        var botCommand = provider.getBotCommand();
+        var keywords = message.text().substring(botCommand.getCommand().length()).trim();
+        if (this.addSearchMiddleware.check(update, botCommand)) {
+            var search = this.botUserSearchService.save(new BojiaBotUserSearch(user, provider, keywords));
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
@@ -134,7 +136,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                             .build()
                             .toSendMessage()
             );
-            this.logResponse("processAddDjinniSearchCommand", sendResponse);
+            this.logResponse("processAddSearchCommand", sendResponse);
         }
     }
 

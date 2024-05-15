@@ -1,6 +1,7 @@
 package com.volod.bojia.tg.domain.search;
 
 import com.pengrad.telegrambot.model.Update;
+import com.volod.bojia.tg.domain.bot.BojiaBotMyCommand;
 
 import java.util.List;
 
@@ -18,12 +19,12 @@ public abstract class AddSearchMiddleware {
         return first;
     }
 
-    public abstract boolean check(Update update);
+    public abstract boolean check(Update update, BojiaBotMyCommand command);
 
-    protected boolean checkNext(Update update) {
+    protected boolean checkNext(Update update, BojiaBotMyCommand command) {
         if (isNull(this.next)) {
             return true;
         }
-        return this.next.check(update);
+        return this.next.check(update, command);
     }
 }

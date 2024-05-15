@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.domain.exception.BojiaBotUpdateIllegal;
+import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +24,7 @@ public abstract class BojiaBotCommandService {
             HELP.getCommand(), this::processHelpCommand,
             ADD_PROMPT.getCommand(), this::processAddPromptCommand,
             SEARCHES.getCommand(), this::processSearchesCommand,
-            DJINNI.getCommand(), this::processAddDjinniSearchCommand,
+            DJINNI.getCommand(), update -> this.processAddSearchCommand(update, VacancyProvider.DJINNI),
             REMOVE_SEARCH.getCommand(), this::processRemoveSearchCommand
     );
 
@@ -59,7 +60,7 @@ public abstract class BojiaBotCommandService {
     public abstract void processHelpCommand(Update update);
     public abstract void processAddPromptCommand(Update update);
     public abstract void processSearchesCommand(Update update);
-    public abstract void processAddDjinniSearchCommand(Update update);
+    public abstract void processAddSearchCommand(Update update, VacancyProvider provider);
     public abstract void processRemoveSearchCommand(Update update);
 
     public void processUnknownCommand(Update update) {

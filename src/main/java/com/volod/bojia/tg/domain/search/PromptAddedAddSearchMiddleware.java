@@ -2,6 +2,7 @@ package com.volod.bojia.tg.domain.search;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.volod.bojia.tg.domain.bot.BojiaBotMyCommand;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.service.bot.BojiaBotUserService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class PromptAddedAddSearchMiddleware extends AddSearchMiddleware {
     private final BojiaBotUserService botUserService;
 
     @Override
-    public boolean check(Update update) {
+    public boolean check(Update update, BojiaBotMyCommand command) {
         var user = this.botUserService.getOrCreateUser(update);
         if (user.isPromptAbsent()) {
             this.bot.execute(
@@ -29,7 +30,7 @@ public class PromptAddedAddSearchMiddleware extends AddSearchMiddleware {
             );
             return false;
         }
-        return this.checkNext(update);
+        return this.checkNext(update, command);
     }
 
 }
