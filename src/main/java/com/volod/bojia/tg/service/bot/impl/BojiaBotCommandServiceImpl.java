@@ -95,7 +95,8 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
             sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
-                            .text("Prompt successfully saved: %s".formatted(user.getPromptOrDefault()))
+                            .text("Prompt successfully saved: ")
+                            .inlineCode(user.getPromptOrDefault())
                             .build()
                             .toSendMessage()
             );
