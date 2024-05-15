@@ -8,7 +8,7 @@ import com.volod.bojia.tg.domain.bot.BojiaBotMyCommand;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.domain.search.AddSearchMiddleware;
 import com.volod.bojia.tg.domain.search.KeywordsPresentAddSearchMiddleware;
-import com.volod.bojia.tg.domain.search.PromptExistAddSearchMiddleware;
+import com.volod.bojia.tg.domain.search.PromptAddedAddSearchMiddleware;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.entity.BojiaBotUser;
 import com.volod.bojia.tg.entity.BojiaBotUserSearch;
@@ -47,7 +47,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         this.botUserService = botUserService;
         this.botUserSearchService = botUserSearchService;
         this.addSearchMiddleware = AddSearchMiddleware.link(
-                new PromptExistAddSearchMiddleware(bot, botUserService),
+                new PromptAddedAddSearchMiddleware(bot, botUserService),
                 List.of(
                         new KeywordsPresentAddSearchMiddleware(bot)
                 )

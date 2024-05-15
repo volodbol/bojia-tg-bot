@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.ADD_PROMPT;
 
 @RequiredArgsConstructor
-public class PromptExistAddSearchMiddleware extends AddSearchMiddleware {
+public class PromptAddedAddSearchMiddleware extends AddSearchMiddleware {
 
     private final TelegramBot bot;
     private final BojiaBotUserService botUserService;
