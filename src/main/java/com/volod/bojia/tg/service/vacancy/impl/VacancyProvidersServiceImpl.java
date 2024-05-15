@@ -3,29 +3,28 @@ package com.volod.bojia.tg.service.vacancy.impl;
 import com.volod.bojia.tg.domain.vacancy.Vacancies;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
-import com.volod.bojia.tg.service.vacancy.VacanciesService;
-import com.volod.bojia.tg.service.vacancy.VacancyService;
+import com.volod.bojia.tg.service.vacancy.VacancyProviderService;
+import com.volod.bojia.tg.service.vacancy.VacancyProvidersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 @Service
-public class VacanciesServiceImpl implements VacanciesService {
+public class VacancyProvidersServiceImpl implements VacancyProvidersService {
 
-    private final ConcurrentMap<VacancyProvider, VacancyService> vacancyServices;
+    private final EnumMap<VacancyProvider, VacancyProviderService> vacancyServices;
 
     @Autowired
-    public VacanciesServiceImpl(
+    public VacancyProvidersServiceImpl(
             BojiaExceptionHandlerService exceptionHandlerService
     ) {
-        this.vacancyServices = new ConcurrentHashMap<>();
+        this.vacancyServices = new EnumMap<>(VacancyProvider.class);
         this.vacancyServices.put(
                 VacancyProvider.DJINNI,
-                new DjinniVacancyService(
+                new DjinniVacancyProviderService(
                         exceptionHandlerService
                 )
         );

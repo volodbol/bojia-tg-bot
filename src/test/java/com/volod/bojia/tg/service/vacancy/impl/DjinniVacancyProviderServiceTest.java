@@ -18,15 +18,15 @@ import static org.mockito.Mockito.verifyNoInteractions;
 @Tag("it")
 @SpringBootTest(classes = {
         BojiaApplicationConfiguration.class,
-        DjinniVacancyService.class
+        DjinniVacancyProviderService.class
 })
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class DjinniVacancyServiceTest {
+class DjinniVacancyProviderServiceTest {
 
     @MockBean
     private BojiaExceptionHandlerService exceptionHandlerService;
     @Autowired
-    private DjinniVacancyService componentUnderTest;
+    private DjinniVacancyProviderService componentUnderTest;
 
     @Test
     void getLastVacanciesTest() {

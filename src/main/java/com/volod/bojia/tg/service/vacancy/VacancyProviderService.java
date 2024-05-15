@@ -6,7 +6,7 @@ import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import java.time.Instant;
 import java.util.List;
 
-public interface VacancyService {
+public interface VacancyProviderService {
     Vacancies getLastVacancies(List<String> searchKeywords, Instant from);
     int getNumberOfVacancies(List<String> searchKeywords);
     VacancyProvider getProvider();

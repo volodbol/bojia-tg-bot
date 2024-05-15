@@ -5,7 +5,7 @@ import com.volod.bojia.tg.domain.vacancy.Vacancies;
 import com.volod.bojia.tg.domain.vacancy.Vacancy;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
-import com.volod.bojia.tg.service.vacancy.VacancyService;
+import com.volod.bojia.tg.service.vacancy.VacancyProviderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -25,7 +25,7 @@ import static com.volod.bojia.tg.constant.JsoupConstants.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DjinniVacancyService implements VacancyService {
+public class DjinniVacancyProviderService implements VacancyProviderService {
 
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
             .withZone(ZoneId.systemDefault());
