@@ -3,7 +3,7 @@ package com.volod.bojia.tg.service.bot.impl;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.response.SendResponse;
-import com.volod.bojia.tg.domain.bot.BojiaBotMyCommand;
+import com.volod.bojia.tg.domain.bot.BojiaBotCommand;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.domain.search.AddSearchMiddleware;
 import com.volod.bojia.tg.domain.search.KeywordsPresentAddSearchMiddleware;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.*;
+import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.*;
 
 @Slf4j
 @Service
@@ -64,7 +64,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                         .text("\n\nWe will ask you to add a prompt about your experience to generate a cover letter ")
                         .text("using AI which you can edit and send with your CV.")
                         .bold("\n\nAvailable commands:")
-                        .text("\n" + BojiaBotMyCommand.getJoinedCommands())
+                        .text("\n" + BojiaBotCommand.getJoinedCommands())
                         .build()
                         .toSendMessage()
         );
@@ -74,7 +74,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
     @Override
     public void processAddPromptCommand(Update update) {
         var message = update.message();
-        var prompt = message.text().substring(ADD_PROMPT.getCommand().length()).trim();
+        var prompt = message.text().substring(ADD_PROMPT.getValue().length()).trim();
         SendResponse sendResponse;
         if (prompt.isBlank()) {
             var user = this.botUserService.getOrCreateUser(update);
@@ -83,7 +83,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                             .chatId(update)
                             .text("To generate cover letter we have to know something about you.")
                             .text("\n\nSend")
-                            .inlineCode("%n%s ".formatted(ADD_PROMPT.getCommand()) +
+                            .inlineCode("%n%s ".formatted(ADD_PROMPT.getValue()) +
                                     "I'm Java Software Engineer with 4+ years of experience." +
                                     "Worked with Java 17, SpringBoot 3, CI/CD, Kafka, AWS")
                             .text("\nto save a new prompt.")
@@ -113,7 +113,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                         .chatId(update)
                         .text("%s".formatted(searches.getKeywordsOrDefault()))
                         .text("\n\nTo remove search send remove command and search id: ")
-                        .inlineCode("%s 432345".formatted(REMOVE_SEARCH.getCommand()))
+                        .inlineCode("%s 432345".formatted(REMOVE_SEARCH.getValue()))
                         .build()
                         .toSendMessage()
         );
@@ -125,7 +125,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         var message = update.message();
         var user = this.botUserService.getOrCreateUser(update);
         var botCommand = provider.getBotCommand();
-        var keywords = message.text().substring(botCommand.getCommand().length()).trim();
+        var keywords = message.text().substring(botCommand.getValue().length()).trim();
         if (this.addSearchMiddleware.check(update, botCommand)) {
             var search = this.botUserSearchService.save(new BojiaBotUserSearch(user, provider, keywords));
             var sendResponse = this.bot.execute(
@@ -144,7 +144,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
     public void processRemoveSearchCommand(Update update) {
         try {
             var message = update.message();
-            var searchId = Long.parseLong(message.text().substring(REMOVE_SEARCH.getCommand().length()).trim());
+            var searchId = Long.parseLong(message.text().substring(REMOVE_SEARCH.getValue().length()).trim());
             this.botUserSearchService.delete(message.from().id(), searchId);
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
@@ -159,7 +159,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                     MessageMarkdownV2.builder()
                             .chatId(update)
                             .text("Can't delete search. Make sure that you sent correct command with proper id value: ")
-                            .inlineCode("%s 432345".formatted(REMOVE_SEARCH.getCommand()))
+                            .inlineCode("%s 432345".formatted(REMOVE_SEARCH.getValue()))
                             .build()
                             .toSendMessage()
             );

@@ -5,7 +5,7 @@ import com.pengrad.telegrambot.request.SetMyCommands;
 import com.volod.bojia.tg.bot.handler.BojiaBotExceptionHandler;
 import com.volod.bojia.tg.bot.listener.BojiaBotUpdatesListener;
 import com.volod.bojia.tg.constant.BojiaLogConstants;
-import com.volod.bojia.tg.domain.bot.BojiaBotMyCommand;
+import com.volod.bojia.tg.domain.bot.BojiaBotCommand;
 import com.volod.bojia.tg.service.bot.BojiaBotDetailsService;
 import com.volod.bojia.tg.service.startup.BojiaStartupService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class BojiaStartupServiceImpl implements BojiaStartupService {
         LOGGER.info(BojiaLogConstants.BOT_PREFIX + "initialization started");
         var botDetails = this.botDetailsService.findOneOrCreate();
         if (!botDetails.isMyCommandsPresent()) {
-            var setMyCommandsResponse = this.bot.execute(new SetMyCommands(BojiaBotMyCommand.getBotCommands()));
+            var setMyCommandsResponse = this.bot.execute(new SetMyCommands(BojiaBotCommand.getBotCommands()));
             LOGGER.info(BojiaLogConstants.BOT_PREFIX + "set my commands response: {}", setMyCommandsResponse);
             botDetails.setMyCommandsPresent(setMyCommandsResponse.isOk());
         }

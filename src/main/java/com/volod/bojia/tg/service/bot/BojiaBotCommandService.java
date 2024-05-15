@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static com.volod.bojia.tg.domain.bot.BojiaBotMyCommand.*;
+import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.*;
 import static java.util.Objects.isNull;
 
 @Slf4j
@@ -21,11 +21,11 @@ public abstract class BojiaBotCommandService {
     protected final BojiaExceptionHandlerService exceptionHandlerService;
 
     private final Map<String, Consumer<Update>> commandMappings = Map.of(
-            HELP.getCommand(), this::processHelpCommand,
-            ADD_PROMPT.getCommand(), this::processAddPromptCommand,
-            SEARCHES.getCommand(), this::processSearchesCommand,
-            DJINNI.getCommand(), update -> this.processAddSearchCommand(update, VacancyProvider.DJINNI),
-            REMOVE_SEARCH.getCommand(), this::processRemoveSearchCommand
+            HELP.getValue(), this::processHelpCommand,
+            ADD_PROMPT.getValue(), this::processAddPromptCommand,
+            SEARCHES.getValue(), this::processSearchesCommand,
+            DJINNI.getValue(), update -> this.processAddSearchCommand(update, VacancyProvider.DJINNI),
+            REMOVE_SEARCH.getValue(), this::processRemoveSearchCommand
     );
 
     protected BojiaBotCommandService(
@@ -67,7 +67,7 @@ public abstract class BojiaBotCommandService {
         this.bot.execute(
                 MessageMarkdownV2.builder()
                         .chatId(update)
-                        .text("Unknown command received. Send %s to see available commands".formatted(HELP.getCommand()))
+                        .text("Unknown command received. Send %s to see available commands".formatted(HELP.getValue()))
                         .build()
                         .toSendMessage()
         );
