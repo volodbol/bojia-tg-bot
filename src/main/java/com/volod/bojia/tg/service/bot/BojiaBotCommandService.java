@@ -65,8 +65,8 @@ public abstract class BojiaBotCommandService {
     public void processUnknownCommand(Update update) {
         this.bot.execute(
                 MessageMarkdownV2.builder()
-                        .chatId(update.message().chat().id())
-                        .text("Unknown command received. Send /help to see available commands")
+                        .chatId(update)
+                        .text("Unknown command received. Send %s to see available commands".formatted(HELP.getCommand()))
                         .build()
                         .toSendMessage()
         );

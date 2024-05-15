@@ -57,7 +57,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
     public void processHelpCommand(Update update) {
         var sendResponse = this.bot.execute(
                 MessageMarkdownV2.builder()
-                        .chatId(update.message().chat().id())
+                        .chatId(update)
                         .text("Bojia is a bot that can monitor your favorite job websites ")
                         .text("and notify you that a new vacancy is posted helping you answer faster.")
                         .text("\n\nWe will ask you to add a prompt about your experience to generate a cover letter ")
@@ -79,10 +79,10 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
             var user = this.botUserService.getOrCreateUser(update);
             sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
-                            .chatId(update.message().chat().id())
+                            .chatId(update)
                             .text("To generate cover letter we have to know something about you.")
                             .text("\n\nSend")
-                            .inlineCode("\n/prompt " +
+                            .inlineCode("%n%s ".formatted(ADD_PROMPT.getCommand()) +
                                     "I'm Java Software Engineer with 4+ years of experience." +
                                     "Worked with Java 17, SpringBoot 3, CI/CD, Kafka, AWS")
                             .text("\nto save a new prompt.")
@@ -108,10 +108,10 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         var searches = this.botUserSearchService.getByUserId(update.message().from().id());
         var sendResponse = this.bot.execute(
                 MessageMarkdownV2.builder()
-                        .chatId(update.message().chat().id())
+                        .chatId(update)
+                        .text("%s".formatted(searches.getKeywordsOrDefault()))
                         .text("\n\nTo remove search send remove command and search id: ")
-                        .inlineCode("/remove 432345")
-                        .text("%n%n%s".formatted(searches.getKeywordsOrDefault()))
+                        .inlineCode("%s 432345".formatted(REMOVE_SEARCH.getCommand()))
                         .build()
                         .toSendMessage()
         );
@@ -127,7 +127,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
             var search = this.botUserSearchService.save(new BojiaBotUserSearch(user, VacancyProvider.DJINNI, keywords));
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
-                            .chatId(message.chat().id())
+                            .chatId(update)
                             .text("Search successfully saved!")
                             .text("%n%n%s - %s".formatted(search.getId(), search.getKeywords()))
                             .build()
@@ -145,7 +145,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
             this.botUserSearchService.delete(message.from().id(), searchId);
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
-                            .chatId(update.message().chat().id())
+                            .chatId(update)
                             .text("Search with id: %s successfully deleted".formatted(searchId))
                             .build()
                             .toSendMessage()
@@ -154,9 +154,9 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         } catch (NumberFormatException ex) {
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
-                            .chatId(update.message().chat().id())
+                            .chatId(update)
                             .text("Can't delete search. Make sure that you sent correct command with proper id value: ")
-                            .inlineCode("/remove 432345")
+                            .inlineCode("%s 432345".formatted(REMOVE_SEARCH.getCommand()))
                             .build()
                             .toSendMessage()
             );
