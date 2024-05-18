@@ -23,7 +23,7 @@ public class KeywordsPresentAddSearchMiddleware extends AddSearchMiddleware {
                             .chatId(update.message().chat().id())
                             .text("To add a new search use ")
                             .inlineCode("%s middle java".formatted(command.getValue()))
-                            .text("\n\nThen we will send you new vacancies with generated cover letter ")
+                            .text("\n\nThen we will be sending you new vacancies with generated cover letter ")
                             .text("according to your %s".formatted(ADD_PROMPT.getValue()))
                             .build()
                             .toSendMessage()

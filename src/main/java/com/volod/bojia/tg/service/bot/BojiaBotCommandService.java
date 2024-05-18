@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 public abstract class BojiaBotCommandService implements BojiaBotUpdateService {
@@ -50,7 +50,7 @@ public abstract class BojiaBotCommandService implements BojiaBotUpdateService {
 
     public final boolean isUpdateValid(Update update) {
         var message = update.message();
-        return !isNull(message) && !isNull(message.text());
+        return nonNull(message) && nonNull(message.text());
     }
 
     public abstract void processHelpCommand(Update update);

@@ -23,8 +23,7 @@ public class SearchUniqueAddSearchMiddleware extends AddSearchMiddleware {
             this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
-                            .text("This search already exist, add another using ")
-                            .inlineCode(command.getValue())
+                            .text("This search already exist, add another using %s".formatted(command.getValue()))
                             .build()
                             .toSendMessage()
             );

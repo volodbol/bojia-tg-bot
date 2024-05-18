@@ -1,14 +1,15 @@
 package com.volod.bojia.tg.domain.vacancy;
 
 import com.volod.bojia.tg.domain.bot.BojiaBotCommand;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
+@AllArgsConstructor
 @Getter
-@RequiredArgsConstructor
 public enum VacancyProvider {
-    DJINNI(BojiaBotCommand.DJINNI);
+    DJINNI("Djinni", BojiaBotCommand.DJINNI);
 
+    private final String readableName;
     private final BojiaBotCommand botCommand;
 
 }

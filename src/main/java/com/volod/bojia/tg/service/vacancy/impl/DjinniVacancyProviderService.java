@@ -6,10 +6,11 @@ import com.volod.bojia.tg.domain.vacancy.Vacancy;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import com.volod.bojia.tg.service.vacancy.VacancyProviderService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -24,13 +25,21 @@ import static com.volod.bojia.tg.constant.JsoupConstants.*;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class DjinniVacancyProviderService implements VacancyProviderService {
 
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
             .withZone(ZoneId.systemDefault());
 
     private final BojiaExceptionHandlerService exceptionHandlerService;
+    private final Connection connection;
+
+    @Autowired
+    public DjinniVacancyProviderService(
+            BojiaExceptionHandlerService exceptionHandlerService
+    ) {
+        this.exceptionHandlerService = exceptionHandlerService;
+        this.connection = Jsoup.connect(this.getUrl());
+    }
 
     /**
      * Returns last vacancies, usually available from the first page.
@@ -42,7 +51,7 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
     @Override
     public Vacancies getLastVacancies(List<String> searchKeywords, Instant from) {
         try {
-            var page = Jsoup.connect(this.getUrl(searchKeywords)).execute().parse();
+            var page = this.connection.newRequest(this.getUrl(searchKeywords)).execute().parse();
             var jobs = page.getElementsByAttributeValueStarting("id", "job-item-");
             return this.getVacancies(jobs, from);
         } catch (IOException | RuntimeException ex) {

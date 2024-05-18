@@ -2,7 +2,10 @@ package com.volod.bojia.tg.service.bot.impl;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.response.SendResponse;
+import com.volod.bojia.tg.domain.bot.BojiaBotCallback;
 import com.volod.bojia.tg.domain.bot.BojiaBotCommand;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.domain.search.AddSearchMiddleware;
@@ -23,7 +26,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.*;
+import static com.volod.bojia.tg.domain.bot.BojiaBotCallback.SEARCH_REMOVED;
+import static com.volod.bojia.tg.domain.bot.BojiaBotCallback.SEARCH_SAVED;
+import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.ADD_PROMPT;
+import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.REMOVE_SEARCH;
 
 @Slf4j
 @Service
@@ -134,13 +140,27 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         var keywords = message.text().substring(botCommand.getValue().length()).trim();
         if (this.addSearchMiddleware.check(update, provider)) {
             var search = this.botUserSearchService.save(new BojiaBotUserSearch(user, provider, keywords));
+            var numberOfVacancies = this.vacancyProvidersService.getNumberOfVacancies(provider, search.getKeywordsSplit());
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
-                            .text("Search successfully saved!")
-                            .text("%n%n%s - %s".formatted(search.getId(), search.getKeywords()))
+                            .text("Found %d vacancies for:".formatted(numberOfVacancies))
+                            .text("%n%n%s - %s".formatted(provider.getReadableName(), search.getKeywords()))
+                            .text("\n\nDo you still want to add this search?")
                             .build()
                             .toSendMessage()
+                            .replyMarkup(
+                                    new InlineKeyboardMarkup(
+                                            new InlineKeyboardButton("Yes")
+                                                    .callbackData(
+                                                            BojiaBotCallback.data(SEARCH_SAVED, search.getId())
+                                                    ),
+                                            new InlineKeyboardButton("No")
+                                                    .callbackData(
+                                                            BojiaBotCallback.data(SEARCH_REMOVED, search.getId())
+                                                    )
+                                    )
+                            )
             );
             this.logResponse("processAddSearchCommand", sendResponse);
         }
