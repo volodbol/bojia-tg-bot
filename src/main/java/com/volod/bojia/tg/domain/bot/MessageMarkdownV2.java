@@ -51,7 +51,13 @@ public class MessageMarkdownV2 {
         }
 
         public MessageMarkdownV2Builder chatId(Update update) {
-            this.chatId = update.message().chat().id();
+            if (nonNull(update.message())) {
+                this.chatId = update.message().chat().id();
+            } else if (nonNull(update.callbackQuery())) {
+                this.chatId = update.callbackQuery().chatInstance();
+            } else {
+                throw new IllegalArgumentException("ChatId is unavailable");
+            }
             return this;
         }
 
