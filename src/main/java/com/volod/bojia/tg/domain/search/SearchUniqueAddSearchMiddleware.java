@@ -4,27 +4,27 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
-import com.volod.bojia.tg.service.bot.BojiaBotUserService;
+import com.volod.bojia.tg.service.bot.BojiaBotUserSearchService;
 import lombok.RequiredArgsConstructor;
 
-import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.ADD_PROMPT;
-
 @RequiredArgsConstructor
-public class PromptAddedAddSearchMiddleware extends AddSearchMiddleware {
+public class SearchUniqueAddSearchMiddleware extends AddSearchMiddleware {
 
     private final TelegramBot bot;
-    private final BojiaBotUserService botUserService;
+    private final BojiaBotUserSearchService botUserSearchService;
 
     @Override
     public boolean check(Update update, VacancyProvider provider) {
-        var user = this.botUserService.getOrCreateUser(update);
-        if (user.isPromptAbsent()) {
+        var message = update.message();
+        var userId = message.from().id();
+        var command = provider.getBotCommand();
+        var keywords = message.text().substring(command.getValue().length()).trim();
+        if (this.botUserSearchService.exists(userId, provider, keywords)) {
             this.bot.execute(
                     MessageMarkdownV2.builder()
-                            .chatId(update.message().chat().id())
-                            .text("You can't add a new search. ")
-                            .text("Use %s to add prompt first. ".formatted(ADD_PROMPT.getValue()))
-                            .text("Then you will be able to add a new search")
+                            .chatId(update)
+                            .text("This search already exist, add another using ")
+                            .inlineCode(command.getValue())
                             .build()
                             .toSendMessage()
             );

@@ -3,7 +3,6 @@ package com.volod.bojia.tg.service.bot;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
-import com.volod.bojia.tg.domain.exception.BojiaBotUpdateIllegal;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,7 @@ import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.*;
 import static java.util.Objects.isNull;
 
 @Slf4j
-public abstract class BojiaBotCommandService implements BojiaBotUpdateService{
+public abstract class BojiaBotCommandService implements BojiaBotUpdateService {
 
     protected final TelegramBot bot;
     protected final BojiaExceptionHandlerService exceptionHandlerService;

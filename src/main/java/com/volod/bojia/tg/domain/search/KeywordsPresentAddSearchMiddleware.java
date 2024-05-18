@@ -2,8 +2,8 @@ package com.volod.bojia.tg.domain.search;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
-import com.volod.bojia.tg.domain.bot.BojiaBotCommand;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
+import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import lombok.RequiredArgsConstructor;
 
 import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.ADD_PROMPT;
@@ -14,7 +14,8 @@ public class KeywordsPresentAddSearchMiddleware extends AddSearchMiddleware {
     private final TelegramBot bot;
 
     @Override
-    public boolean check(Update update, BojiaBotCommand command) {
+    public boolean check(Update update, VacancyProvider provider) {
+        var command = provider.getBotCommand();
         var keywords = update.message().text().substring(command.getValue().length()).trim();
         if (keywords.isBlank()) {
             this.bot.execute(
@@ -29,7 +30,7 @@ public class KeywordsPresentAddSearchMiddleware extends AddSearchMiddleware {
             );
             return false;
         }
-        return this.checkNext(update, command);
+        return this.checkNext(update, provider);
     }
 
 }

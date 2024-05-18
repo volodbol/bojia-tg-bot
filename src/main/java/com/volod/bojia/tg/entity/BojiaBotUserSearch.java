@@ -40,6 +40,10 @@ public class BojiaBotUserSearch {
         this.keywords = keywords;
     }
 
+    public List<String> getKeywordsSplit() {
+        return Arrays.asList(this.keywords.split(" "));
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

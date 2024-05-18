@@ -8,6 +8,7 @@ import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.domain.search.AddSearchMiddleware;
 import com.volod.bojia.tg.domain.search.KeywordsPresentAddSearchMiddleware;
 import com.volod.bojia.tg.domain.search.PromptAddedAddSearchMiddleware;
+import com.volod.bojia.tg.domain.search.SearchUniqueAddSearchMiddleware;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.entity.BojiaBotUser;
 import com.volod.bojia.tg.entity.BojiaBotUserSearch;
@@ -15,6 +16,7 @@ import com.volod.bojia.tg.service.bot.BojiaBotCommandService;
 import com.volod.bojia.tg.service.bot.BojiaBotUserSearchService;
 import com.volod.bojia.tg.service.bot.BojiaBotUserService;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
+import com.volod.bojia.tg.service.vacancy.VacancyProvidersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
     // Services
     private final BojiaBotUserService botUserService;
     private final BojiaBotUserSearchService botUserSearchService;
+    private final VacancyProvidersService vacancyProvidersService;
     // Middleware
     private final AddSearchMiddleware addSearchMiddleware;
 
@@ -38,7 +41,8 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
             TelegramBot bot,
             BojiaExceptionHandlerService exceptionHandlerService,
             BojiaBotUserService botUserService,
-            BojiaBotUserSearchService botUserSearchService
+            BojiaBotUserSearchService botUserSearchService,
+            VacancyProvidersService vacancyProvidersService
     ) {
         super(
                 bot,
@@ -46,10 +50,12 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         );
         this.botUserService = botUserService;
         this.botUserSearchService = botUserSearchService;
+        this.vacancyProvidersService = vacancyProvidersService;
         this.addSearchMiddleware = AddSearchMiddleware.link(
                 new PromptAddedAddSearchMiddleware(bot, botUserService),
                 List.of(
-                        new KeywordsPresentAddSearchMiddleware(bot)
+                        new KeywordsPresentAddSearchMiddleware(bot),
+                        new SearchUniqueAddSearchMiddleware(bot, botUserSearchService)
                 )
         );
     }
@@ -126,7 +132,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         var user = this.botUserService.getOrCreateUser(update);
         var botCommand = provider.getBotCommand();
         var keywords = message.text().substring(botCommand.getValue().length()).trim();
-        if (this.addSearchMiddleware.check(update, botCommand)) {
+        if (this.addSearchMiddleware.check(update, provider)) {
             var search = this.botUserSearchService.save(new BojiaBotUserSearch(user, provider, keywords));
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
@@ -149,7 +155,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
             var sendResponse = this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
-                            .text("Search with id: %s successfully deleted".formatted(searchId))
+                            .text("Search with id %s successfully deleted".formatted(searchId))
                             .build()
                             .toSendMessage()
             );

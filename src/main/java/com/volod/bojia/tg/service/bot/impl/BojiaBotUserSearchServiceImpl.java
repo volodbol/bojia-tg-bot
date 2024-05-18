@@ -1,5 +1,6 @@
 package com.volod.bojia.tg.service.bot.impl;
 
+import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.entity.BojiaBotUserSearch;
 import com.volod.bojia.tg.entity.BojiaBotUserSearches;
 import com.volod.bojia.tg.repository.BojiaBotUserSearchRepository;
@@ -20,8 +21,12 @@ public class BojiaBotUserSearchServiceImpl implements BojiaBotUserSearchService 
 
     @Override
     public BojiaBotUserSearch save(BojiaBotUserSearch search) {
-        return this.userSearchRepository.findByUserIdAndProviderAndKeywords(search)
-                .orElseGet(() -> this.userSearchRepository.save(search));
+        return this.userSearchRepository.save(search);
+    }
+
+    @Override
+    public boolean exists(Long userId, VacancyProvider provider, String keywords) {
+        return this.userSearchRepository.existsByUserIdAndProviderAndKeywords(userId, provider, keywords);
     }
 
     @Override
