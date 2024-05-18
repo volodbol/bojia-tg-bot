@@ -15,7 +15,7 @@ import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.*;
 import static java.util.Objects.isNull;
 
 @Slf4j
-public abstract class BojiaBotCommandService {
+public abstract class BojiaBotCommandService implements BojiaBotUpdateService{
 
     protected final TelegramBot bot;
     protected final BojiaExceptionHandlerService exceptionHandlerService;
@@ -38,23 +38,20 @@ public abstract class BojiaBotCommandService {
 
     public final Integer processUpdate(Update update) {
         try {
-            this.validateUpdate(update);
             var message = update.message();
             var command = message.text().split(" ")[0];
             this.commandMappings.getOrDefault(command, this::processUnknownCommand).accept(update);
             return update.updateId();
-        } catch (BojiaBotUpdateIllegal | RuntimeException ex) {
+        } catch (RuntimeException ex) {
             this.exceptionHandlerService.publishException(ex);
+            this.processUnknownCommand(update);
+            return update.updateId();
         }
-        this.processUnknownCommand(update);
-        return update.updateId();
     }
 
-    public final void validateUpdate(Update update) throws BojiaBotUpdateIllegal {
+    public final boolean isUpdateValid(Update update) {
         var message = update.message();
-        if (isNull(message) || isNull(message.text())) {
-            throw new BojiaBotUpdateIllegal(update);
-        }
+        return !isNull(message) && !isNull(message.text());
     }
 
     public abstract void processHelpCommand(Update update);
