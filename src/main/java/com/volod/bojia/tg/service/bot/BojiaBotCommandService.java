@@ -2,6 +2,7 @@ package com.volod.bojia.tg.service.bot;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.response.SendResponse;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
@@ -58,6 +59,16 @@ public abstract class BojiaBotCommandService implements BojiaBotUpdateService {
     public abstract void processSearchesCommand(Update update);
     public abstract void processAddSearchCommand(Update update, VacancyProvider provider);
     public abstract void processRemoveSearchCommand(Update update);
+
+    public final SendResponse sendPleaseWaitMessage(Update update, String reason) {
+        return this.bot.execute(
+                MessageMarkdownV2.builder()
+                        .chatId(update)
+                        .text("%s. Please wait...".formatted(reason))
+                        .build()
+                        .toSendMessage()
+        );
+    }
 
     public void processUnknownCommand(Update update) {
         this.bot.execute(

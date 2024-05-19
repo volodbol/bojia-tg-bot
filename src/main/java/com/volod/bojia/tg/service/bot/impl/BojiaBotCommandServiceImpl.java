@@ -132,15 +132,17 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         var keywords = message.text().substring(botCommand.getValue().length()).trim();
         if (this.addSearchMiddleware.check(update, provider)) {
             var search = this.botUserSearchService.save(new BojiaBotUserSearch(user, provider, keywords));
+            var sendResponse = this.sendPleaseWaitMessage(update, "Fetching vacancies");
             var numberOfVacancies = this.vacancyProvidersService.getNumberOfVacancies(provider, search.getKeywordsSplit());
             this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
+                            .messageId(sendResponse.message().messageId())
                             .text("Found %d vacancies for:".formatted(numberOfVacancies))
                             .text("%n%n%s - %s".formatted(provider.getReadableName(), search.getKeywords()))
                             .text("\n\nDo you still want to add this search?")
                             .build()
-                            .toSendMessage()
+                            .toEditMessageText()
                             .replyMarkup(
                                     new InlineKeyboardMarkup(
                                             new InlineKeyboardButton("Yes")
