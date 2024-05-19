@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
-import com.pengrad.telegrambot.response.SendResponse;
 import com.volod.bojia.tg.domain.bot.BojiaBotCallback;
 import com.volod.bojia.tg.domain.bot.BojiaBotCommand;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
@@ -20,7 +19,6 @@ import com.volod.bojia.tg.service.bot.BojiaBotUserSearchService;
 import com.volod.bojia.tg.service.bot.BojiaBotUserService;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import com.volod.bojia.tg.service.vacancy.VacancyProvidersService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +29,6 @@ import static com.volod.bojia.tg.domain.bot.BojiaBotCallback.SEARCH_SAVED;
 import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.ADD_PROMPT;
 import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.REMOVE_SEARCH;
 
-@Slf4j
 @Service
 public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
 
@@ -68,7 +65,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
 
     @Override
     public void processHelpCommand(Update update) {
-        var sendResponse = this.bot.execute(
+        this.bot.execute(
                 MessageMarkdownV2.builder()
                         .chatId(update)
                         .text("Bojia is a bot that can monitor your favorite job websites ")
@@ -80,17 +77,15 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                         .build()
                         .toSendMessage()
         );
-        this.logResponse("processHelpCommand", sendResponse);
     }
 
     @Override
     public void processAddPromptCommand(Update update) {
         var message = update.message();
         var prompt = message.text().substring(ADD_PROMPT.getValue().length()).trim();
-        SendResponse sendResponse;
         if (prompt.isBlank()) {
             var user = this.botUserService.getOrCreateUser(update);
-            sendResponse = this.bot.execute(
+            this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
                             .text("To generate cover letter we have to know something about you.")
@@ -105,7 +100,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
             );
         } else {
             var user = this.botUserService.save(new BojiaBotUser(update, prompt));
-            sendResponse = this.bot.execute(
+            this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
                             .text("Prompt successfully saved: ")
@@ -114,13 +109,12 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                             .toSendMessage()
             );
         }
-        this.logResponse("processAddPromptCommand", sendResponse);
     }
 
     @Override
     public void processSearchesCommand(Update update) {
         var searches = this.botUserSearchService.getByUserId(update.message().from().id());
-        var sendResponse = this.bot.execute(
+        this.bot.execute(
                 MessageMarkdownV2.builder()
                         .chatId(update)
                         .text("%s".formatted(searches.getKeywordsOrDefault()))
@@ -129,7 +123,6 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                         .build()
                         .toSendMessage()
         );
-        this.logResponse("processSearchesCommand", sendResponse);
     }
 
     @Override
@@ -141,7 +134,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
         if (this.addSearchMiddleware.check(update, provider)) {
             var search = this.botUserSearchService.save(new BojiaBotUserSearch(user, provider, keywords));
             var numberOfVacancies = this.vacancyProvidersService.getNumberOfVacancies(provider, search.getKeywordsSplit());
-            var sendResponse = this.bot.execute(
+            this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
                             .text("Found %d vacancies for:".formatted(numberOfVacancies))
@@ -162,7 +155,6 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                                     )
                             )
             );
-            this.logResponse("processAddSearchCommand", sendResponse);
         }
     }
 
@@ -172,16 +164,16 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
             var message = update.message();
             var searchId = Long.parseLong(message.text().substring(REMOVE_SEARCH.getValue().length()).trim());
             this.botUserSearchService.delete(message.from().id(), searchId);
-            var sendResponse = this.bot.execute(
+            this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
                             .text("Search with id %s successfully deleted".formatted(searchId))
                             .build()
                             .toSendMessage()
             );
-            this.logResponse("processRemoveSearchCommand", sendResponse);
         } catch (NumberFormatException ex) {
-            var sendResponse = this.bot.execute(
+            // TODO [VB] send general message how to delete a search
+            this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
                             .text("Can't delete search. Make sure that you sent correct command with proper id value: ")
@@ -189,16 +181,7 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                             .build()
                             .toSendMessage()
             );
-            this.logResponse("processRemoveSearchCommand", sendResponse);
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // PRIVATE METHODS
-    // -----------------------------------------------------------------------------------------------------------------
-    private void logResponse(String methodName, SendResponse response) {
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("[{}] send message response: {}", methodName, response);
-        }
-    }
 }
