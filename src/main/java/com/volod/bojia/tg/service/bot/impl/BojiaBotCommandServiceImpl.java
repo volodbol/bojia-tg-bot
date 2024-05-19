@@ -26,8 +26,7 @@ import java.util.List;
 
 import static com.volod.bojia.tg.domain.bot.BojiaBotCallback.SEARCH_REMOVED;
 import static com.volod.bojia.tg.domain.bot.BojiaBotCallback.SEARCH_SAVED;
-import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.ADD_PROMPT;
-import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.REMOVE_SEARCH;
+import static com.volod.bojia.tg.domain.bot.BojiaBotCommand.*;
 
 @Service
 public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
@@ -172,11 +171,10 @@ public class BojiaBotCommandServiceImpl extends BojiaBotCommandService {
                             .toSendMessage()
             );
         } catch (NumberFormatException ex) {
-            // TODO [VB] send general message how to delete a search
             this.bot.execute(
                     MessageMarkdownV2.builder()
                             .chatId(update)
-                            .text("Can't delete search. Make sure that you sent correct command with proper id value: ")
+                            .text("To delete a search, get search id from %s and send - ".formatted(SEARCHES.getValue()))
                             .inlineCode("%s 432345".formatted(REMOVE_SEARCH.getValue()))
                             .build()
                             .toSendMessage()
