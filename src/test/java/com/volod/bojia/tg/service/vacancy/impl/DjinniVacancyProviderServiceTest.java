@@ -40,6 +40,14 @@ class DjinniVacancyProviderServiceTest {
         // Assert
         verifyNoInteractions(this.exceptionHandlerService);
         assertThat(actual.values()).isNotEmpty();
+        assertThat(actual.values()).allSatisfy(vacancy -> {
+            assertThat(vacancy.company()).isNotBlank();
+            assertThat(vacancy.title()).isNotBlank();
+            assertThat(vacancy.shortDetails()).isNotBlank();
+            assertThat(vacancy.description()).isNotBlank();
+            assertThat(vacancy.url()).isNotBlank();
+            assertThat(vacancy.published()).isAfter(Instant.parse("2024-05-05T10:15:30.00Z"));
+        });
     }
 
     @Test
@@ -52,7 +60,7 @@ class DjinniVacancyProviderServiceTest {
 
         // Assert
         verifyNoInteractions(this.exceptionHandlerService);
-        assertThat(actual).isNotZero();
+        assertThat(actual).isPositive();
     }
 
 }

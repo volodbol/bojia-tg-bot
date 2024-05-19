@@ -116,7 +116,7 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
                 var titleText = title.text();
                 var url = title.first().getElementsByAttribute(HREF).attr(HREF);
                 var description = element.getElementsByAttributeValueStarting(ID, "job-description");
-                var descriptionText = description.attr("data-original-text");
+                var descriptionText = description.text();
                 var shortDetails = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__job-info");
                 var shortDetailsList = shortDetails.text();
                 vacancies.add(
