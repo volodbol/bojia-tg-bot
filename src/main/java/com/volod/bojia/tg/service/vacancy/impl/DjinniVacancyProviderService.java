@@ -18,7 +18,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.volod.bojia.tg.constant.JsoupConstants.*;
@@ -119,12 +118,12 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
                 var description = element.getElementsByAttributeValueStarting(ID, "job-description");
                 var descriptionText = description.attr("data-original-text");
                 var shortDetails = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__job-info");
-                var shortDetailsList = shortDetails.eachText();
+                var shortDetailsList = shortDetails.text();
                 vacancies.add(
                         new Vacancy(
                                 companyText,
                                 titleText,
-                                new LinkedList<>(shortDetailsList),
+                                shortDetailsList,
                                 descriptionText,
                                 this.getUrl() + url.replace("/jobs/", ""),
                                 publishedTime
