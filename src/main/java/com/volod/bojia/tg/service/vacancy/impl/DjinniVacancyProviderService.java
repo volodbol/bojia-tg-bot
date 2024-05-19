@@ -9,6 +9,7 @@ import com.volod.bojia.tg.service.vacancy.VacancyProviderService;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,14 @@ import static com.volod.bojia.tg.constant.JsoupConstants.*;
 @Service
 public class DjinniVacancyProviderService implements VacancyProviderService {
 
-    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+    private static final DateTimeFormatter DJINNI_DTF = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
             .withZone(ZoneId.systemDefault());
 
+    // Services
     private final BojiaExceptionHandlerService exceptionHandlerService;
+    // Jsoup
     private final Connection connection;
+    private final Document.OutputSettings outputSettings;
 
     @Autowired
     public DjinniVacancyProviderService(
@@ -38,6 +42,8 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
     ) {
         this.exceptionHandlerService = exceptionHandlerService;
         this.connection = Jsoup.connect(this.getUrl());
+        this.outputSettings = new Document.OutputSettings();
+        this.outputSettings.prettyPrint(false);
     }
 
     /**
@@ -51,6 +57,9 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
     public Vacancies getLastVacancies(List<String> searchKeywords, Instant from) {
         try {
             var page = this.connection.newRequest(this.getUrl(searchKeywords)).get();
+            page.outputSettings(this.outputSettings);
+            page.select("br").before("\\n");
+            page.select("p").before("\\n");
             var jobs = page.getElementsByAttributeValueStarting("id", "job-item-");
             return this.getVacancies(jobs, from);
         } catch (IOException | RuntimeException ex) {
@@ -106,7 +115,7 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
             try {
                 var counts = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__counts");
                 var published = counts.first().getElementsByAttribute(TITLE).attr(TITLE);
-                var publishedTime = Instant.from(DTF.parse(published));
+                var publishedTime = Instant.from(DJINNI_DTF.parse(published));
                 if (publishedTime.isBefore(from)) {
                     continue;
                 }
@@ -115,10 +124,10 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
                 var title = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__title");
                 var titleText = title.text();
                 var url = title.first().getElementsByAttribute(HREF).attr(HREF);
-                var description = element.getElementsByAttributeValueStarting(ID, "job-description");
-                var descriptionText = description.text();
                 var shortDetails = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__job-info");
                 var shortDetailsList = shortDetails.text();
+                var description = element.getElementsByAttributeValueStarting(ID, "job-description");
+                var descriptionText = description.text().replace("\\n", "\n");
                 vacancies.add(
                         new Vacancy(
                                 companyText,
