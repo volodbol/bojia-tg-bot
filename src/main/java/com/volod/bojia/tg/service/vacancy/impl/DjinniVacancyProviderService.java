@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
     @Override
     public Vacancies getLastVacancies(List<String> searchKeywords, Instant from) {
         try {
-            var page = this.connection.newRequest(this.getUrl(searchKeywords)).execute().parse();
+            var page = this.connection.newRequest(this.getUrl(searchKeywords)).get();
             var jobs = page.getElementsByAttributeValueStarting("id", "job-item-");
             return this.getVacancies(jobs, from);
         } catch (IOException | RuntimeException ex) {
@@ -102,7 +102,7 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
     // -----------------------------------------------------------------------------------------------------------------
     @SuppressWarnings("DataFlowIssue")
     private Vacancies getVacancies(Elements elements, Instant from) {
-        var vacancies = new HashSet<Vacancy>();
+        var vacancies = new ArrayList<Vacancy>();
         for (var element : elements) {
             try {
                 var counts = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__counts");

@@ -1,21 +1,26 @@
 package com.volod.bojia.tg.domain.vacancy;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.List;
 
 public record Vacancies(
-        Set<Vacancy> values,
+        List<Vacancy> values,
         Instant lastPublished
 ) {
 
     public static Vacancies empty() {
-        return new Vacancies(Set.of(), Instant.now());
+        return new Vacancies(List.of(), Instant.now());
     }
 
-    public static Vacancies of(Set<Vacancy> vacancies) {
+    public static Vacancies of(List<Vacancy> vacancies) {
         return new Vacancies(
-                vacancies,
-                vacancies.stream().map(Vacancy::published).max(Instant::compareTo).orElseGet(Instant::now)
+                vacancies.stream()
+                        .sorted(Vacancy.NEWEST)
+                        .toList(),
+                vacancies.stream()
+                        .map(Vacancy::published)
+                        .max(Instant::compareTo)
+                        .orElseGet(Instant::now)
         );
     }
 }
