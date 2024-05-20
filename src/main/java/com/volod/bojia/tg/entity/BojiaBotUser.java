@@ -31,6 +31,16 @@ public class BojiaBotUser {
     @Column
     private String prompt;
 
+    public static BojiaBotUser testsHardcoded() {
+        return new BojiaBotUser(
+                23234343L,
+                43433223L,
+                "drizzy",
+                "/I'm Java Software Engineer with 4+ years of experience." +
+                        "Worked with Java 17, SpringBoot 3, CI/CD, Kafka, AWS"
+        );
+    }
+
     public BojiaBotUser(Update update) {
         var user = update.message().from();
         var chat = update.message().chat();
