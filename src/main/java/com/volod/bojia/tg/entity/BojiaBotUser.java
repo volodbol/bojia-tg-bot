@@ -36,7 +36,7 @@ public class BojiaBotUser {
                 23234343L,
                 43433223L,
                 "drizzy",
-                "/I'm Java Software Engineer with 4+ years of experience." +
+                "I'm Java Software Engineer with 4+ years of experience." +
                         "Worked with Java 17, SpringBoot 3, CI/CD, Kafka, AWS"
         );
     }
