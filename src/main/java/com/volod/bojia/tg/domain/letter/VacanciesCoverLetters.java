@@ -4,8 +4,8 @@ import com.volod.bojia.tg.entity.BojiaBotUserSearch;
 
 import java.util.List;
 
-public record CoverLetters(
+public record VacanciesCoverLetters(
         BojiaBotUserSearch botUserSearch,
-        List<CoverLetter> coverLetters
+        List<VacancyCoverLetter> values
 ) {
 }

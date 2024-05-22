@@ -37,13 +37,13 @@ class CoverLetterServiceImplTest {
     private CoverLetterServiceImpl componentUnderTest;
 
     @Test
-    void generateCoverLetterTest() {
+    void generateVacancyCoverLetterTest() {
         // Arrange
         var user = BojiaBotUser.testsHardcoded();
         var vacancy = Vacancy.testsHardcoded();
 
         // Act
-        var coverLetter = this.componentUnderTest.generateCoverLetter(user, vacancy);
+        var coverLetter = this.componentUnderTest.generateVacancyCoverLetter(user, vacancy);
         System.out.println(coverLetter);
 
         // Assert

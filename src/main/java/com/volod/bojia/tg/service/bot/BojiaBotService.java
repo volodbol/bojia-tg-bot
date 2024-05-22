@@ -1,7 +1,7 @@
 package com.volod.bojia.tg.service.bot;
 
-import com.volod.bojia.tg.domain.letter.CoverLetter;
+import com.volod.bojia.tg.domain.letter.VacancyCoverLetter;
 
 public interface BojiaBotService {
-    void sendCoverLetter(CoverLetter coverLetter);
+    void sendVacancyCoverLetter(VacancyCoverLetter vacancyCoverLetter);
 }
