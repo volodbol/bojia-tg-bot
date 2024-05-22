@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
-import com.volod.bojia.tg.service.bot.BojiaBotUserSearchService;
+import com.volod.bojia.tg.service.search.BojiaBotUserSearchService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

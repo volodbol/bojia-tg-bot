@@ -1,4 +1,4 @@
-package com.volod.bojia.tg.service.bot;
+package com.volod.bojia.tg.service.search;
 
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.entity.BojiaBotUserSearch;

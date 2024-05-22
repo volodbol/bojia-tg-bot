@@ -1,9 +1,9 @@
-package com.volod.bojia.tg.service.bot.impl;
+package com.volod.bojia.tg.service.user.impl;
 
 import com.pengrad.telegrambot.model.Update;
 import com.volod.bojia.tg.entity.BojiaBotUser;
 import com.volod.bojia.tg.repository.BojiaBotUserRepository;
-import com.volod.bojia.tg.service.bot.BojiaBotUserService;
+import com.volod.bojia.tg.service.user.BojiaBotUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

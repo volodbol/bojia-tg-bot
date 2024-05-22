@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.volod.bojia.tg.domain.bot.MessageMarkdownV2;
 import com.volod.bojia.tg.service.bot.BojiaBotCallbackService;
-import com.volod.bojia.tg.service.bot.BojiaBotUserSearchService;
+import com.volod.bojia.tg.service.search.BojiaBotUserSearchService;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
