@@ -8,6 +8,8 @@ import com.volod.bojia.tg.service.search.BojiaBotUserSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BojiaBotUserSearchServiceImpl implements BojiaBotUserSearchService {
@@ -17,6 +19,11 @@ public class BojiaBotUserSearchServiceImpl implements BojiaBotUserSearchService 
     @Override
     public BojiaBotUserSearches getByUserId(Long userId) {
         return new BojiaBotUserSearches(this.userSearchRepository.findAllByUserId(userId));
+    }
+
+    @Override
+    public List<BojiaBotUserSearch> saveAll(List<BojiaBotUserSearch> searches) {
+        return this.userSearchRepository.saveAll(searches);
     }
 
     @Override
