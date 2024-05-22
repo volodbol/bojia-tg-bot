@@ -1,5 +1,6 @@
 package com.volod.bojia.tg.service.letter.impl;
 
+import com.volod.bojia.tg.domain.letter.CoverLetter;
 import com.volod.bojia.tg.domain.vacancy.Vacancy;
 import com.volod.bojia.tg.entity.BojiaBotUser;
 import com.volod.bojia.tg.service.exception.BojiaExceptionHandlerService;
@@ -31,7 +32,7 @@ public class CoverLetterServiceImpl implements CoverLetterService {
     private final OpenAiChatClient chatClient;
 
     @Override
-    public String generateCoverLetter(BojiaBotUser user, Vacancy vacancy) {
+    public CoverLetter generateCoverLetter(BojiaBotUser user, Vacancy vacancy) {
         try {
             PROMPT_TEMPLATE.add("description", vacancy.description());
             PROMPT_TEMPLATE.add("prompt", user.getPrompt());
@@ -43,10 +44,13 @@ public class CoverLetterServiceImpl implements CoverLetterService {
                                     .build()
                     )
             );
-            return response.getResult().getOutput().getContent();
+            return new CoverLetter(
+                    vacancy,
+                    response.getResult().getOutput().getContent()
+            );
         } catch (RuntimeException ex) {
             this.exceptionHandlerService.publishException(ex);
-            return "Error generating cover letter, contact development team";
+            return new CoverLetter(vacancy, "Error generating cover letter, contact development team");
         }
     }
 

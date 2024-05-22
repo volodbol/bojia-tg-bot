@@ -48,7 +48,7 @@ class CoverLetterServiceImplTest {
 
         // Assert
         verifyNoInteractions(this.exceptionHandlerService);
-        assertThat(coverLetter).isNotBlank();
+        assertThat(coverLetter.value()).isNotBlank();
     }
 
 }
