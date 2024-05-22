@@ -23,6 +23,7 @@ import java.util.List;
 
 import static com.volod.bojia.tg.constant.JsoupConstants.*;
 
+// TODO [VB] implement retry mechanism
 @Slf4j
 @Service
 public class DjinniVacancyProviderService implements VacancyProviderService {
