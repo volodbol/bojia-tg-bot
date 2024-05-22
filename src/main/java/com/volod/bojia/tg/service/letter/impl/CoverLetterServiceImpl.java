@@ -45,12 +45,17 @@ public class CoverLetterServiceImpl implements CoverLetterService {
                     )
             );
             return new CoverLetter(
+                    user,
                     vacancy,
                     response.getResult().getOutput().getContent()
             );
         } catch (RuntimeException ex) {
             this.exceptionHandlerService.publishException(ex);
-            return new CoverLetter(vacancy, "Error generating cover letter, contact development team");
+            return new CoverLetter(
+                    user,
+                    vacancy,
+                    "Error generating cover letter, contact development team"
+            );
         }
     }
 
