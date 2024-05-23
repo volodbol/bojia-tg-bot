@@ -2,10 +2,12 @@ package com.volod.bojia.tg.entity;
 
 import com.volod.bojia.tg.constant.PostgresConstants;
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
+import com.volod.bojia.tg.entity.converter.InstantToLongConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +33,9 @@ public class BojiaBotUserSearch {
     private VacancyProvider provider;
     @Column(nullable = false)
     private String keywords;
+    @Column(nullable = false)
+    @Convert(converter = InstantToLongConverter.class)
+    private Instant lastPublished;
 
     public BojiaBotUserSearch(
             BojiaBotUser user,
@@ -40,6 +45,7 @@ public class BojiaBotUserSearch {
         this.user = user;
         this.provider = provider;
         this.keywords = keywords;
+        this.lastPublished = Instant.now();
     }
 
     public List<String> getKeywordsSplit() {
