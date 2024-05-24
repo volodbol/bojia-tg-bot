@@ -2,7 +2,7 @@ package com.volod.bojia.tg.service.search.impl;
 
 import com.volod.bojia.tg.domain.vacancy.VacancyProvider;
 import com.volod.bojia.tg.entity.BojiaBotUserSearch;
-import com.volod.bojia.tg.entity.BojiaBotUserSearches;
+import com.volod.bojia.tg.domain.search.BojiaBotUserSearches;
 import com.volod.bojia.tg.repository.BojiaBotUserSearchRepository;
 import com.volod.bojia.tg.service.search.BojiaBotUserSearchService;
 import lombok.RequiredArgsConstructor;

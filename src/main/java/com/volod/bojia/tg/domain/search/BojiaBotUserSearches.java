@@ -1,4 +1,6 @@
-package com.volod.bojia.tg.entity;
+package com.volod.bojia.tg.domain.search;
+
+import com.volod.bojia.tg.entity.BojiaBotUserSearch;
 
 import java.util.List;
 import java.util.stream.Collectors;
