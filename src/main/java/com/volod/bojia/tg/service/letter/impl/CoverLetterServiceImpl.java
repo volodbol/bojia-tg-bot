@@ -20,7 +20,7 @@ public class CoverLetterServiceImpl implements CoverLetterService {
 
     private static final PromptTemplate PROMPT_TEMPLATE = new PromptTemplate("""
             "{description}"
-            Generate a small cover letter to this vacancy description above as an senior HR specialist who saw a lot of nice cover
+            Generate a small and short cover letter to this vacancy description above as an senior HR specialist who saw a lot of nice cover
             letters. To generate a cover letter, use this information, which was provided by a person who is interested in a vacancy:
             "{prompt}"
             """
