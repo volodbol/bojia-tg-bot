@@ -36,6 +36,9 @@ public class BojiaBotUserSearch {
     @Column(nullable = false)
     @Convert(converter = InstantToLongConverter.class)
     private Instant lastPublished;
+    @Column(nullable = false)
+    @Convert(converter = InstantToLongConverter.class)
+    private Instant lastFetched;
 
     public BojiaBotUserSearch(
             BojiaBotUser user,
@@ -45,7 +48,9 @@ public class BojiaBotUserSearch {
         this.user = user;
         this.provider = provider;
         this.keywords = keywords;
-        this.lastPublished = Instant.now();
+        var now = Instant.now();
+        this.lastPublished = now;
+        this.lastFetched = now;
     }
 
     public List<String> getKeywordsSplit() {

@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS bojia_bot_user_search
     provider       VARCHAR(512)  NOT NULL,
     keywords       VARCHAR(1024) NOT NULL,
     last_published BIGINT        NOT NULL,
+    last_fetched   BIGINT        NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES bojia_bot_user (id)
 );
 
