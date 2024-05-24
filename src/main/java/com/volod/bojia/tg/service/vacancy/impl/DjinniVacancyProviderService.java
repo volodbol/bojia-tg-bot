@@ -117,7 +117,7 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
                 var counts = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__counts");
                 var published = counts.first().getElementsByAttribute(TITLE).attr(TITLE);
                 var publishedTime = Instant.from(DJINNI_DTF.parse(published));
-                if (publishedTime.isBefore(from)) {
+                if (publishedTime.isBefore(from) || publishedTime.equals(from)) {
                     continue;
                 }
                 var company = element.getElementsByAttributeValueStarting(CLASS, "job-list-item__pic");
