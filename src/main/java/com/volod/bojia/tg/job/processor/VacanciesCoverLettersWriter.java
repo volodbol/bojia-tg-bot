@@ -28,9 +28,7 @@ public class VacanciesCoverLettersWriter implements ItemWriter<VacanciesCoverLet
                 })
                 .toList();
         this.botUserSearchService.saveAll(searches);
-        items.stream()
-                .flatMap(letters -> letters.values().stream())
-                .forEach(this.botService::sendVacancyCoverLetter);
+        items.forEach(this.botService::sendVacanciesCoverLetters);
     }
 
 }

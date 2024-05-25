@@ -27,7 +27,8 @@ public class CoverLetterServiceImpl implements CoverLetterService {
             "{prompt}".
             
             Remember, you are writing this cover letter for another person (not as a HR) with information about them
-            above from their name. This cover letter will be immediately send from a person interested in a vacancy.
+            above from their name. This cover letter will be immediately send from a person interested in a vacancy. You
+            don't have to write a recommendation, just a cover letter example for interested person.
             """);
 
     // Services

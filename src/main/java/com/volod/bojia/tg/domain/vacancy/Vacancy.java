@@ -50,4 +50,7 @@ public record Vacancy(
                 Instant.parse("2024-05-19T12:13:00.000Z"));
     }
 
+    public String getTrimmedDescription(int length) {
+        return this.description.substring(0, Math.min(length, this.description.length()));
+    }
 }
