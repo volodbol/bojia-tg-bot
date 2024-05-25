@@ -37,6 +37,15 @@ class MessageMarkdownV2Test {
         );
     }
 
+    private static Stream<Arguments> addItalicTest() {
+        return Stream.of(
+                Arguments.of(
+                        "To generate cover letter we have to know something about you.",
+                        "_To generate cover letter we have to know something about you\\._"
+                )
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("addTextTest")
     void addTextTest(String text, String expected) {
@@ -68,6 +77,19 @@ class MessageMarkdownV2Test {
     void addBoldTest(String text, String expected) {
         // Arrange
         var builder = MessageMarkdownV2.builder().chatId(1).bold(text);
+
+        // Act
+        var actual = builder.build();
+
+        // Assert
+        assertThat(actual.getValue()).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @MethodSource("addItalicTest")
+    void addItalicTest(String text, String expected) {
+        // Arrange
+        var builder = MessageMarkdownV2.builder().chatId(1).italic(text);
 
         // Act
         var actual = builder.build();

@@ -91,6 +91,11 @@ public class MessageMarkdownV2 {
             return this;
         }
 
+        public MessageMarkdownV2Builder italic(String value) {
+            this.builder.append("_%s_".formatted(this.escape(value)));
+            return this;
+        }
+
         public MessageMarkdownV2 build() {
             if (nonNull(this.chatId)) {
                 var message = this.builder.toString();
