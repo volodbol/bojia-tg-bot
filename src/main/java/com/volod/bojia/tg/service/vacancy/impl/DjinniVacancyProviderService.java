@@ -16,6 +16,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -29,7 +30,6 @@ import java.util.concurrent.Executors;
 
 import static com.volod.bojia.tg.constant.JsoupConstants.*;
 
-// TODO [VB] implement retry mechanism
 @Slf4j
 @Service
 public class DjinniVacancyProviderService implements VacancyProviderService {
@@ -37,21 +37,21 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
     private static final DateTimeFormatter DJINNI_DTF = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
             .withZone(ZoneId.systemDefault());
 
+    // Retry
+    private final RetryTemplate retryTemplate;
     // Services
-    private final BojiaExceptionHandlerService exceptionHandlerService;
     private final ExecutorService executor;
+    private final BojiaExceptionHandlerService exceptionHandlerService;
     // Jsoup
     private final Connection connection;
     private final Document.OutputSettings outputSettings;
 
     @Autowired
     public DjinniVacancyProviderService(
+            RetryTemplate retryTemplate,
             BojiaExceptionHandlerService exceptionHandlerService
     ) {
-        this.exceptionHandlerService = exceptionHandlerService;
-        this.connection = Jsoup.connect(this.getUrl());
-        this.outputSettings = new Document.OutputSettings();
-        this.outputSettings.prettyPrint(false);
+        this.retryTemplate = retryTemplate;
         // WARNING: 15 vacancies per page, with check rate 30 minutes, usually no more than 5 vacancies expected
         this.executor = Executors.newFixedThreadPool(
                 5,
@@ -59,6 +59,10 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
                         .namingPattern("djinniVacancyProviderService-%d")
                         .build()
         );
+        this.exceptionHandlerService = exceptionHandlerService;
+        this.connection = Jsoup.connect(this.getUrl());
+        this.outputSettings = new Document.OutputSettings();
+        this.outputSettings.prettyPrint(false);
     }
 
     /**
@@ -71,10 +75,13 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
     @Override
     public Vacancies getLastVacancies(List<String> searchKeywords, Instant from) {
         try {
-            var page = this.connection.newRequest(this.getUrl(searchKeywords)).get();
-            page.outputSettings(this.outputSettings);
-            page.select("br").before("\\n");
-            page.select("p").before("\\n");
+             var page = this.retryTemplate.execute(context -> {
+                var document = this.connection.newRequest(this.getUrl(searchKeywords)).get();
+                document.outputSettings(this.outputSettings);
+                document.select("br").before("\\n");
+                document.select("p").before("\\n");
+                return document;
+            });
             var jobs = page.getElementsByAttributeValueStarting("id", "job-item-");
             return this.getVacancies(jobs, from);
         } catch (IOException | RuntimeException ex) {
@@ -88,7 +95,10 @@ public class DjinniVacancyProviderService implements VacancyProviderService {
     @Override
     public int getNumberOfVacancies(List<String> searchKeywords) {
         try {
-            var page = Jsoup.connect(this.getUrl(searchKeywords)).execute().parse();
+            var page = this.retryTemplate.execute(context -> {
+                var response = Jsoup.connect(this.getUrl(searchKeywords)).execute();
+                return response.parse();
+            });
             var pageHeader = page.body().getElementsByClass("page-header");
             var splitHeader = pageHeader.eachText().get(0).split(" ");
             return Integer.parseInt(splitHeader[splitHeader.length - 1]);
