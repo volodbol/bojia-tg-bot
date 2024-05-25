@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.volod.bojia</groupId>
     <artifactId>bojia-tg-bot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>bojia-tg-bot</name>
     <description>Application to search for jobs and generate cover letters with AI using Telegram Bot API</description>
     <properties>
