@@ -14,8 +14,12 @@ public record BojiaBotUserSearches(List<BojiaBotUserSearch> values) {
             return "You have no searches";
         } else {
             return this.values.stream()
-                    .map(search -> "%s - %s".formatted(search.getId(), search.getKeywords()))
-                    .collect(Collectors.joining(",\n"));
+                    .map(search -> "%s - %s - %s".formatted(
+                            search.getId(),
+                            search.getProvider().getReadableName(),
+                            search.getKeywords()
+                    ))
+                    .collect(Collectors.joining("\n"));
         }
     }
 
