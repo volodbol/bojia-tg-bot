@@ -12,6 +12,6 @@ To fetch Djinni vacancies - 1s (to improve maybe need to get access to API, or m
 vacancy before `from` time, stop processing). Uses general retry.
 
 To generate cover letter for one vacancy by OpenAI GPT3.5 - 1s (no idea what we can do here). Uses Spring AI retry
-with settings from property plus default from reference site.
+with settings from property plus default.
 
-To send two messages by TG bot with vacancy and cover letter - 1s (no idea what we can do here). Doesn't use retry logic.
+To send two messages by TG bot with vacancy and cover letter - 1s (no idea what we can do here). Uses general retry.
