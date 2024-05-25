@@ -9,6 +9,7 @@ import com.volod.bojia.tg.service.letter.CoverLetterService;
 import com.volod.bojia.tg.service.search.BojiaBotUserSearchService;
 import com.volod.bojia.tg.service.vacancy.VacancyProvidersService;
 import jakarta.persistence.EntityManagerFactory;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -24,6 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.concurrent.Executors;
 
 @Configuration
 public class CoverLetterJobConfiguration extends DefaultBatchConfiguration {
@@ -82,7 +85,13 @@ public class CoverLetterJobConfiguration extends DefaultBatchConfiguration {
     ) {
         return new BojiaBotUserSearchProcessor(
                 vacancyProvidersService,
-                coverLetterService
+                coverLetterService,
+                Executors.newFixedThreadPool(
+                        10,
+                        new BasicThreadFactory.Builder()
+                                .namingPattern("botUserSearchProcessor-%d")
+                                .build()
+                )
         );
     }
 

@@ -19,12 +19,16 @@ import static org.springframework.ai.openai.api.OpenAiApi.ChatModel.GPT_3_5_TURB
 public class CoverLetterServiceImpl implements CoverLetterService {
 
     private static final PromptTemplate PROMPT_TEMPLATE = new PromptTemplate("""
-            "{description}"
-            Generate a small and short cover letter to this vacancy description above as an senior HR specialist who saw a lot of nice cover
-            letters. To generate a cover letter, use this information, which was provided by a person who is interested in a vacancy:
-            "{prompt}"
-            """
-    );
+            "{description}".
+            
+            Create a short cover letter (around 5 sentences) to this vacancy description above as a Senior HR
+            specialist who saw a lot of nice cover letters. To generate a cover letter, use the information below,
+            provided by a person interested in a vacancy:
+            "{prompt}".
+            
+            Remember, you are writing this cover letter for another person (not as a HR) with information about them
+            above from their name. This cover letter will be immediately send from a person interested in a vacancy.
+            """);
 
     // Services
     private final BojiaExceptionHandlerService exceptionHandlerService;

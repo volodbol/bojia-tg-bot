@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 
+import java.time.Instant;
+
 @RequiredArgsConstructor
 public class VacanciesCoverLettersWriter implements ItemWriter<VacanciesCoverLetters> {
 
@@ -16,10 +18,12 @@ public class VacanciesCoverLettersWriter implements ItemWriter<VacanciesCoverLet
     @Override
     public void write(Chunk<? extends VacanciesCoverLetters> chunk) {
         var items = chunk.getItems();
+        var now = Instant.now();
         var searches = items.stream()
                 .map(letters -> {
                     var search = letters.botUserSearch();
                     search.setLastPublished(letters.lastPublishedVacancy());
+                    search.setLastFetched(now);
                     return search;
                 })
                 .toList();

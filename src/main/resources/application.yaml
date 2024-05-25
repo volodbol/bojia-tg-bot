@@ -3,3 +3,7 @@ spring:
     web-application-type: NONE
   application:
     name: bojia-tg-bot
+  ai:
+    retry:
+      on-client-errors: true
+      max-attempts: 6
