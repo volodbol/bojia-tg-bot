@@ -6,11 +6,13 @@ import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.Clock;
 import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
 
+@EnableScheduling
 @EnableAsync
 @Configuration
 public class BojiaApplicationConfiguration {

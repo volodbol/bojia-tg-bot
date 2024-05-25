@@ -1,2 +1,3 @@
 bojia:
   admin-chat-ids: [ "111" ]
+  cover-letter-job-cron: "*/5 * * * *"

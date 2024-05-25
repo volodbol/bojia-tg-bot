@@ -13,4 +13,5 @@ import java.util.List;
 public class BojiaApplicationProperties {
     private final String botToken;
     private final List<String> adminChatIds;
+    private final String coverLetterJobCron;
 }
