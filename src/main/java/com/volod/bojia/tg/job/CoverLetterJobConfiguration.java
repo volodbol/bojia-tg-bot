@@ -10,7 +10,6 @@ import com.volod.bojia.tg.service.search.BojiaBotUserSearchService;
 import com.volod.bojia.tg.service.vacancy.VacancyProvidersService;
 import jakarta.persistence.EntityManagerFactory;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
@@ -23,19 +22,12 @@ import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilde
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.concurrent.Executors;
 
 @Configuration
 public class CoverLetterJobConfiguration extends DefaultBatchConfiguration {
-
-    @NotNull
-    @Override
-    protected TaskExecutor getTaskExecutor() {
-        return new SimpleAsyncTaskExecutor();
-    }
 
     @Bean
     Job coverLettersJob(
@@ -62,7 +54,7 @@ public class CoverLetterJobConfiguration extends DefaultBatchConfiguration {
                 .processor(botUserSearchProcessor)
                 .writer(vacanciesCoverLettersWriter)
                 .allowStartIfComplete(true)
-                .taskExecutor(new SimpleAsyncTaskExecutor())
+                .taskExecutor(new SimpleAsyncTaskExecutor("coverLettersJob-step1-"))
                 .build();
     }
 
